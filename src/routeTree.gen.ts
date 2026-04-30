@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppAppIndexRouteImport } from './routes/_app.app.index'
 import { Route as AppAppOnboardingRouteImport } from './routes/_app.app.onboarding'
 
 const AuthRoute = AuthRouteImport.update({
@@ -28,6 +29,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppAppIndexRoute = AppAppIndexRouteImport.update({
+  id: '/app/',
+  path: '/app/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAppOnboardingRoute = AppAppOnboardingRouteImport.update({
   id: '/app/onboarding',
   path: '/app/onboarding',
@@ -38,11 +44,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app/onboarding': typeof AppAppOnboardingRoute
+  '/app/': typeof AppAppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app/onboarding': typeof AppAppOnboardingRoute
+  '/app': typeof AppAppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,13 +58,20 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/_app/app/onboarding': typeof AppAppOnboardingRoute
+  '/_app/app/': typeof AppAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/app/onboarding'
+  fullPaths: '/' | '/auth' | '/app/onboarding' | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/app/onboarding'
-  id: '__root__' | '/' | '/_app' | '/auth' | '/_app/app/onboarding'
+  to: '/' | '/auth' | '/app/onboarding' | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/auth'
+    | '/_app/app/onboarding'
+    | '/_app/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -88,6 +103,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/app/': {
+      id: '/_app/app/'
+      path: '/app'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppAppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/app/onboarding': {
       id: '/_app/app/onboarding'
       path: '/app/onboarding'
@@ -100,10 +122,12 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppAppOnboardingRoute: typeof AppAppOnboardingRoute
+  AppAppIndexRoute: typeof AppAppIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppAppOnboardingRoute: AppAppOnboardingRoute,
+  AppAppIndexRoute: AppAppIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
