@@ -14,7 +14,336 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      alerts: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          metadata: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          metadata?: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          metadata?: Json | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bank_accounts: {
+        Row: {
+          account_name: string
+          account_type: string
+          balance: number
+          bank_name: string
+          created_at: string
+          currency: string
+          id: string
+          is_mock: boolean
+          last_sync_at: string | null
+          user_id: string
+        }
+        Insert: {
+          account_name: string
+          account_type?: string
+          balance?: number
+          bank_name: string
+          created_at?: string
+          currency?: string
+          id?: string
+          is_mock?: boolean
+          last_sync_at?: string | null
+          user_id: string
+        }
+        Update: {
+          account_name?: string
+          account_type?: string
+          balance?: number
+          bank_name?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          is_mock?: boolean
+          last_sync_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bank_accounts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      budgets: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          month: number
+          planned_amount: number
+          user_id: string
+          year: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          month: number
+          planned_amount?: number
+          user_id: string
+          year: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          month?: number
+          planned_amount?: number
+          user_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "budgets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          first_name: string
+          id: string
+          last_name: string
+          monthly_income: number | null
+          onboarding_completed: boolean
+          risk_level: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          first_name?: string
+          id: string
+          last_name?: string
+          monthly_income?: number | null
+          onboarding_completed?: boolean
+          risk_level?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          monthly_income?: number | null
+          onboarding_completed?: boolean
+          risk_level?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      risk_assessments: {
+        Row: {
+          answers: Json
+          created_at: string
+          id: string
+          risk_level: string
+          score: number
+          user_id: string
+        }
+        Insert: {
+          answers: Json
+          created_at?: string
+          id?: string
+          risk_level: string
+          score: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          id?: string
+          risk_level?: string
+          score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "risk_assessments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      savings_goals: {
+        Row: {
+          created_at: string
+          current_amount: number
+          emoji: string
+          id: string
+          is_completed: boolean
+          name: string
+          target_amount: number
+          target_date: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_amount?: number
+          emoji?: string
+          id?: string
+          is_completed?: boolean
+          name: string
+          target_amount: number
+          target_date?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_amount?: number
+          emoji?: string
+          id?: string
+          is_completed?: boolean
+          name?: string
+          target_amount?: number
+          target_date?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "savings_goals_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          account_id: string
+          amount: number
+          category: string
+          category_confidence: number | null
+          created_at: string
+          id: string
+          is_recurring: boolean
+          is_unexpected: boolean
+          label: string
+          transaction_date: string
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          amount: number
+          category?: string
+          category_confidence?: number | null
+          created_at?: string
+          id?: string
+          is_recurring?: boolean
+          is_unexpected?: boolean
+          label: string
+          transaction_date: string
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          amount?: number
+          category?: string
+          category_confidence?: number | null
+          created_at?: string
+          id?: string
+          is_recurring?: boolean
+          is_unexpected?: boolean
+          label?: string
+          transaction_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
