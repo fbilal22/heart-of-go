@@ -9,38 +9,173 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AppRouteImport } from './routes/_app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppAppIndexRouteImport } from './routes/_app.app.index'
+import { Route as AppAppTransactionsRouteImport } from './routes/_app.app.transactions'
+import { Route as AppAppSavingsRouteImport } from './routes/_app.app.savings'
+import { Route as AppAppOnboardingRouteImport } from './routes/_app.app.onboarding'
+import { Route as AppAppInvestmentsRouteImport } from './routes/_app.app.investments'
+import { Route as AppAppChatRouteImport } from './routes/_app.app.chat'
+import { Route as AppAppBudgetRouteImport } from './routes/_app.app.budget'
+import { Route as AppAppAlertsRouteImport } from './routes/_app.app.alerts'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppAppIndexRoute = AppAppIndexRouteImport.update({
+  id: '/app/',
+  path: '/app/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAppTransactionsRoute = AppAppTransactionsRouteImport.update({
+  id: '/app/transactions',
+  path: '/app/transactions',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAppSavingsRoute = AppAppSavingsRouteImport.update({
+  id: '/app/savings',
+  path: '/app/savings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAppOnboardingRoute = AppAppOnboardingRouteImport.update({
+  id: '/app/onboarding',
+  path: '/app/onboarding',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAppInvestmentsRoute = AppAppInvestmentsRouteImport.update({
+  id: '/app/investments',
+  path: '/app/investments',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAppChatRoute = AppAppChatRouteImport.update({
+  id: '/app/chat',
+  path: '/app/chat',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAppBudgetRoute = AppAppBudgetRouteImport.update({
+  id: '/app/budget',
+  path: '/app/budget',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAppAlertsRoute = AppAppAlertsRouteImport.update({
+  id: '/app/alerts',
+  path: '/app/alerts',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/app/alerts': typeof AppAppAlertsRoute
+  '/app/budget': typeof AppAppBudgetRoute
+  '/app/chat': typeof AppAppChatRoute
+  '/app/investments': typeof AppAppInvestmentsRoute
+  '/app/onboarding': typeof AppAppOnboardingRoute
+  '/app/savings': typeof AppAppSavingsRoute
+  '/app/transactions': typeof AppAppTransactionsRoute
+  '/app/': typeof AppAppIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/app/alerts': typeof AppAppAlertsRoute
+  '/app/budget': typeof AppAppBudgetRoute
+  '/app/chat': typeof AppAppChatRoute
+  '/app/investments': typeof AppAppInvestmentsRoute
+  '/app/onboarding': typeof AppAppOnboardingRoute
+  '/app/savings': typeof AppAppSavingsRoute
+  '/app/transactions': typeof AppAppTransactionsRoute
+  '/app': typeof AppAppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_app/app/alerts': typeof AppAppAlertsRoute
+  '/_app/app/budget': typeof AppAppBudgetRoute
+  '/_app/app/chat': typeof AppAppChatRoute
+  '/_app/app/investments': typeof AppAppInvestmentsRoute
+  '/_app/app/onboarding': typeof AppAppOnboardingRoute
+  '/_app/app/savings': typeof AppAppSavingsRoute
+  '/_app/app/transactions': typeof AppAppTransactionsRoute
+  '/_app/app/': typeof AppAppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/app/alerts'
+    | '/app/budget'
+    | '/app/chat'
+    | '/app/investments'
+    | '/app/onboarding'
+    | '/app/savings'
+    | '/app/transactions'
+    | '/app/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/app/alerts'
+    | '/app/budget'
+    | '/app/chat'
+    | '/app/investments'
+    | '/app/onboarding'
+    | '/app/savings'
+    | '/app/transactions'
+    | '/app'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/auth'
+    | '/_app/app/alerts'
+    | '/_app/app/budget'
+    | '/_app/app/chat'
+    | '/_app/app/investments'
+    | '/_app/app/onboarding'
+    | '/_app/app/savings'
+    | '/_app/app/transactions'
+    | '/_app/app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +183,93 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/app/': {
+      id: '/_app/app/'
+      path: '/app'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AppAppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/app/transactions': {
+      id: '/_app/app/transactions'
+      path: '/app/transactions'
+      fullPath: '/app/transactions'
+      preLoaderRoute: typeof AppAppTransactionsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/app/savings': {
+      id: '/_app/app/savings'
+      path: '/app/savings'
+      fullPath: '/app/savings'
+      preLoaderRoute: typeof AppAppSavingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/app/onboarding': {
+      id: '/_app/app/onboarding'
+      path: '/app/onboarding'
+      fullPath: '/app/onboarding'
+      preLoaderRoute: typeof AppAppOnboardingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/app/investments': {
+      id: '/_app/app/investments'
+      path: '/app/investments'
+      fullPath: '/app/investments'
+      preLoaderRoute: typeof AppAppInvestmentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/app/chat': {
+      id: '/_app/app/chat'
+      path: '/app/chat'
+      fullPath: '/app/chat'
+      preLoaderRoute: typeof AppAppChatRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/app/budget': {
+      id: '/_app/app/budget'
+      path: '/app/budget'
+      fullPath: '/app/budget'
+      preLoaderRoute: typeof AppAppBudgetRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/app/alerts': {
+      id: '/_app/app/alerts'
+      path: '/app/alerts'
+      fullPath: '/app/alerts'
+      preLoaderRoute: typeof AppAppAlertsRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppRouteChildren {
+  AppAppAlertsRoute: typeof AppAppAlertsRoute
+  AppAppBudgetRoute: typeof AppAppBudgetRoute
+  AppAppChatRoute: typeof AppAppChatRoute
+  AppAppInvestmentsRoute: typeof AppAppInvestmentsRoute
+  AppAppOnboardingRoute: typeof AppAppOnboardingRoute
+  AppAppSavingsRoute: typeof AppAppSavingsRoute
+  AppAppTransactionsRoute: typeof AppAppTransactionsRoute
+  AppAppIndexRoute: typeof AppAppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAppAlertsRoute: AppAppAlertsRoute,
+  AppAppBudgetRoute: AppAppBudgetRoute,
+  AppAppChatRoute: AppAppChatRoute,
+  AppAppInvestmentsRoute: AppAppInvestmentsRoute,
+  AppAppOnboardingRoute: AppAppOnboardingRoute,
+  AppAppSavingsRoute: AppAppSavingsRoute,
+  AppAppTransactionsRoute: AppAppTransactionsRoute,
+  AppAppIndexRoute: AppAppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
