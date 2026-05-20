@@ -129,6 +129,40 @@ function TransactionsPage() {
         </Select>
       </Card>
 
+      {breakdown.total > 0 && (
+        <Card className="p-5 shadow-soft border-border/60 space-y-4">
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-sm font-semibold tracking-tight">Répartition des dépenses</h2>
+            <span className="text-xs text-muted-foreground">Total : {formatEUR(-breakdown.total, { sign: true })}</span>
+          </div>
+          <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-muted">
+            {breakdown.rows.map(r => (
+              <div key={r.category} style={{ width: `${r.pct}%`, background: CATEGORY_META[r.category].color }} title={`${CATEGORY_META[r.category].label} · ${r.pct.toFixed(0)}%`} />
+            ))}
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+            {breakdown.rows.map(r => {
+              const meta = CATEGORY_META[r.category]; const Icon = meta.icon;
+              return (
+                <button
+                  key={r.category}
+                  onClick={() => setFilter(filter === r.category ? "ALL" : r.category)}
+                  className={`flex items-center gap-3 rounded-lg border p-2.5 text-left transition-colors hover:bg-muted/50 ${filter === r.category ? "border-primary/60 bg-muted/40" : "border-border/60"}`}
+                >
+                  <div className="size-8 rounded-md flex items-center justify-center shrink-0" style={{ background: meta.color + "22", color: meta.color }}>
+                    <Icon className="size-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-medium truncate">{meta.label}</p>
+                    <p className="text-xs text-muted-foreground">{formatEUR(r.value)} · {r.pct.toFixed(0)}%</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </Card>
+      )}
+
       <Card className="shadow-soft border-border/60 divide-y divide-border">
         {filtered.length === 0 && <p className="p-8 text-center text-sm text-muted-foreground">Aucune transaction.</p>}
         {filtered.map(t => {
