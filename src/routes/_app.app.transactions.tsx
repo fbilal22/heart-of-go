@@ -49,6 +49,19 @@ function TransactionsPage() {
     });
   }, [txs, q, filter]);
 
+  const breakdown = useMemo(() => {
+    const totals = new Map<Category, number>();
+    for (const t of filtered) {
+      if (t.amount >= 0) continue;
+      totals.set(t.category, (totals.get(t.category) ?? 0) + Math.abs(t.amount));
+    }
+    const total = Array.from(totals.values()).reduce((s, v) => s + v, 0);
+    const rows = Array.from(totals.entries())
+      .map(([category, value]) => ({ category, value, pct: total ? (value / total) * 100 : 0 }))
+      .sort((a, b) => b.value - a.value);
+    return { rows, total };
+  }, [filtered]);
+
   const submit = async () => {
     if (!user || !form.accountId || !form.label || !form.amount) return toast.error("Remplissez tous les champs.");
     setBusy(true);
