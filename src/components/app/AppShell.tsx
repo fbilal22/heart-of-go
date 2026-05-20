@@ -51,7 +51,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
         <nav className="px-3 flex-1 space-y-1">
           {NAV.map((item) => {
-            const active = item.exact ? location.pathname === item.to : location.pathname.startsWith(item.to);
+            const isExact = "exact" in item && item.exact;
+            const active = isExact ? location.pathname === item.to : location.pathname.startsWith(item.to);
             const Icon = item.icon;
             return (
               <Link key={item.to} to={item.to}
@@ -95,7 +96,8 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-sidebar text-sidebar-foreground border-t border-sidebar-border flex justify-around py-2">
         {NAV.slice(0, 5).map((item) => {
-          const active = item.exact ? location.pathname === item.to : location.pathname.startsWith(item.to);
+          const isExact = "exact" in item && item.exact;
+          const active = isExact ? location.pathname === item.to : location.pathname.startsWith(item.to);
           const Icon = item.icon;
           return (
             <Link key={item.to} to={item.to}
