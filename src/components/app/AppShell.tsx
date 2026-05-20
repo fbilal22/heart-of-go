@@ -8,14 +8,14 @@ import { cn } from "@/lib/utils";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
-const NAV = [
+const NAV: ReadonlyArray<{ to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }> = [
   { to: "/app", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { to: "/app/transactions", label: "Transactions", icon: ArrowLeftRight },
   { to: "/app/budget", label: "Budget", icon: Wallet },
   { to: "/app/savings", label: "Épargne", icon: Target },
   { to: "/app/investments", label: "Investir", icon: TrendingUp },
   { to: "/app/chat", label: "Assistant IA", icon: MessageCircle },
-] as const;
+];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile, user, signOut } = useAuth();
