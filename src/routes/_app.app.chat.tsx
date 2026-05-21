@@ -82,12 +82,12 @@ function ChatPage() {
   };
 
   return (
-    <div className="p-6 md:p-10 max-w-3xl mx-auto space-y-4 h-[calc(100vh-1px)] flex flex-col">
-      <header className="flex items-center gap-3">
-        <div className="size-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow"><Sparkles className="size-5 text-primary-foreground" /></div>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Assistant IA</h1>
-          <p className="text-sm text-muted-foreground">Posez vos questions sur vos finances.</p>
+    <div className="p-4 md:p-10 max-w-3xl mx-auto space-y-3 md:space-y-4 h-[calc(100dvh-3.5rem-4.5rem)] md:h-[calc(100dvh-1px)] flex flex-col">
+      <header className="flex items-center gap-3 shrink-0">
+        <div className="size-9 md:size-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow"><Sparkles className="size-4 md:size-5 text-primary-foreground" /></div>
+        <div className="min-w-0">
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight">Assistant IA</h1>
+          <p className="text-xs md:text-sm text-muted-foreground truncate">Posez vos questions sur vos finances.</p>
         </div>
       </header>
 
@@ -108,7 +108,7 @@ function ChatPage() {
         ))}
       </Card>
 
-      <form onSubmit={e => { e.preventDefault(); void send(); }} className="flex gap-2">
+      <form onSubmit={e => { e.preventDefault(); void send(); }} className="flex gap-2 shrink-0">
         <Input value={input} onChange={e => setInput(e.target.value)} placeholder="Écrivez votre question…" disabled={busy} />
         <Button type="submit" disabled={busy || !input.trim()} className="bg-gradient-primary border-0">
           {busy ? <Loader2 className="size-4 animate-spin" /> : <Send className="size-4" />}
