@@ -14,8 +14,8 @@ import { Sparkles, Loader2 } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Connexion — Pécule" },
-      { name: "description", content: "Connectez-vous ou créez votre compte Pécule." },
+      { title: "Connexion — FinanceApp" },
+      { name: "description", content: "Connectez-vous ou créez votre compte FinanceApp." },
     ],
   }),
   component: AuthPage,
@@ -69,7 +69,7 @@ function AuthPage() {
             <div className="size-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
               <Sparkles className="size-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-semibold">Pécule</span>
+            <span className="text-xl font-semibold">FinanceApp</span>
           </Link>
           <h2 className="text-4xl font-bold tracking-tight">Vos finances, enfin claires.</h2>
           <p className="mt-4 text-sidebar-foreground/70">

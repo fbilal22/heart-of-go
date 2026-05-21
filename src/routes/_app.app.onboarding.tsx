@@ -73,7 +73,7 @@ function Onboarding() {
       // Welcome alert
       await supabase.from("alerts").insert({
         user_id: user.id, type: "WELCOME",
-        title: "Bienvenue sur Pécule 👋",
+        title: "Bienvenue sur FinanceApp 👋",
         message: "Vos données ont été configurées. Explorez votre tableau de bord !",
       });
 
@@ -91,7 +91,7 @@ function Onboarding() {
       <Card className="w-full max-w-xl p-8 shadow-elegant">
         <div className="flex items-center gap-2 mb-2">
           <div className="size-8 rounded-lg bg-gradient-primary flex items-center justify-center"><Sparkles className="size-4 text-primary-foreground" /></div>
-          <span className="font-semibold">Pécule</span>
+          <span className="font-semibold">FinanceApp</span>
         </div>
         <Progress value={progress} className="mb-6" />
 

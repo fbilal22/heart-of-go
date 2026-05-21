@@ -13,7 +13,7 @@ import { Plus, Search, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/app/transactions")({
-  head: () => ({ meta: [{ title: "Transactions — Pécule" }] }),
+  head: () => ({ meta: [{ title: "Transactions — FinanceApp" }] }),
   component: TransactionsPage,
 });
 
