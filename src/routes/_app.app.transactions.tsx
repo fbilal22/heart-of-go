@@ -79,14 +79,18 @@ function TransactionsPage() {
   };
 
   return (
-    <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-6">
-      <header className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Transactions</h1>
-          <p className="text-sm text-muted-foreground mt-1">{filtered.length} opérations</p>
+    <div className="p-4 md:p-10 max-w-6xl mx-auto space-y-5 md:space-y-6">
+      <header className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Transactions</h1>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">{filtered.length} opérations</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button className="bg-gradient-primary border-0"><Plus className="size-4 mr-1" /> Ajouter</Button></DialogTrigger>
+          <DialogTrigger asChild>
+            <Button size="sm" className="bg-gradient-primary border-0 shrink-0 md:size-default">
+              <Plus className="size-4 md:mr-1" /> <span className="hidden sm:inline">Ajouter</span>
+            </Button>
+          </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Nouvelle transaction</DialogTitle></DialogHeader>
             <div className="space-y-3">
