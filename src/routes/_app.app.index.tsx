@@ -11,7 +11,7 @@ import { CATEGORY_META, calculateHealthScore, formatEUR, type Category } from "@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 export const Route = createFileRoute("/_app/app/")({
-  head: () => ({ meta: [{ title: "Tableau de bord — Pécule" }] }),
+  head: () => ({ meta: [{ title: "Tableau de bord — FinanceApp" }] }),
   component: Dashboard,
 });
 

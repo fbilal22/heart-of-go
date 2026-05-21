@@ -6,8 +6,8 @@ import { Eye, Brain, PiggyBank, TrendingUp, Sparkles, ArrowRight, ShieldCheck } 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Pécule — Reprenez le contrôle de vos finances" },
-      { name: "description", content: "Voir, comprendre, épargner, investir. Pécule réunit vos finances en un seul endroit." },
+      { title: "FinanceApp — Reprenez le contrôle de vos finances" },
+      { name: "description", content: "Voir, comprendre, épargner, investir. FinanceApp réunit vos finances en un seul endroit." },
     ],
   }),
   component: Landing,
@@ -30,7 +30,7 @@ function Landing() {
             <div className="size-8 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow">
               <Sparkles className="size-4 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-lg tracking-tight">Pécule</span>
+            <span className="font-semibold text-lg tracking-tight">FinanceApp</span>
           </div>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost"><Link to="/auth">Se connecter</Link></Button>
@@ -100,7 +100,7 @@ function Landing() {
       </section>
 
       <footer className="border-t border-border/60 py-8 text-center text-sm text-muted-foreground">
-        Pécule · Vos données restent les vôtres.
+        FinanceApp · Vos données restent les vôtres.
       </footer>
     </div>
   );

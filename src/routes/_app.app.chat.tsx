@@ -9,7 +9,7 @@ import { Sparkles, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/app/chat")({
-  head: () => ({ meta: [{ title: "Assistant IA — Pécule" }] }),
+  head: () => ({ meta: [{ title: "Assistant IA — FinanceApp" }] }),
   component: ChatPage,
 });
 

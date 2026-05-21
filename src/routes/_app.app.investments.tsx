@@ -6,7 +6,7 @@ import { INVESTMENT_PRODUCTS } from "@/lib/finance";
 import { TrendingUp, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/_app/app/investments")({
-  head: () => ({ meta: [{ title: "Investir — Pécule" }] }),
+  head: () => ({ meta: [{ title: "Investir — FinanceApp" }] }),
   component: InvestmentsPage,
 });
 

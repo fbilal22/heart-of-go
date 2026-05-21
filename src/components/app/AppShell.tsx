@@ -56,7 +56,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="size-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow">
             <Sparkles className="size-5 text-primary-foreground" />
           </div>
-          <span className="text-lg font-semibold tracking-tight">Pécule</span>
+          <span className="text-lg font-semibold tracking-tight">FinanceApp</span>
         </div>
         <nav className="px-3 flex-1 space-y-1">
           {NAV.map((item) => {
@@ -108,7 +108,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="size-8 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow">
             <Sparkles className="size-4 text-primary-foreground" />
           </div>
-          <span className="font-semibold tracking-tight">Pécule</span>
+          <span className="font-semibold tracking-tight">FinanceApp</span>
         </Link>
         <div className="flex items-center gap-1">
           <Link to="/app/alerts" className="relative size-9 rounded-lg flex items-center justify-center hover:bg-sidebar-accent">

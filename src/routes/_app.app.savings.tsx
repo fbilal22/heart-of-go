@@ -13,7 +13,7 @@ import { formatEUR } from "@/lib/finance";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/app/savings")({
-  head: () => ({ meta: [{ title: "Épargne — Pécule" }] }),
+  head: () => ({ meta: [{ title: "Épargne — FinanceApp" }] }),
   component: SavingsPage,
 });
 
