@@ -90,15 +90,15 @@ function Dashboard() {
   const recent = txs.slice(0, 6);
 
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
       <header className="flex items-end justify-between flex-wrap gap-4">
         <div>
           <p className="text-sm text-muted-foreground">Bonjour {profile?.first_name} 👋</p>
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight mt-1">Tableau de bord</h1>
+          <h1 className="text-2xl md:text-4xl font-bold tracking-tight mt-1">Tableau de bord</h1>
         </div>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-4">
         <StatCard label="Solde total" value={formatEUR(totalBalance)} icon={Wallet} hint={`${accounts.length} comptes`} tone="primary" />
         <StatCard label="Revenus du mois" value={formatEUR(stats.totalIncome)} icon={ArrowUpRight} tone="success" />
         <StatCard label="Dépenses du mois" value={formatEUR(stats.totalExpenses)} icon={ArrowDownRight} tone="destructive" />
@@ -201,20 +201,20 @@ function Dashboard() {
       </div>
 
       {/* CTA cards */}
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="p-6 bg-gradient-card shadow-soft border-border/60 flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold flex items-center gap-2"><PiggyBank className="size-4 text-primary" /> Définissez un objectif d'épargne</h3>
-            <p className="text-sm text-muted-foreground mt-1">Vacances, achat, projet : visualisez votre progression.</p>
+      <div className="grid gap-3 md:gap-4 md:grid-cols-2">
+        <Card className="p-4 md:p-6 bg-gradient-card shadow-soft border-border/60 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="font-semibold text-sm md:text-base flex items-center gap-2"><PiggyBank className="size-4 text-primary shrink-0" /> <span className="truncate">Objectif d'épargne</span></h3>
+            <p className="text-xs md:text-sm text-muted-foreground mt-1">Vacances, achat, projet : visualisez votre progression.</p>
           </div>
-          <Button asChild><Link to="/app/savings">Créer</Link></Button>
+          <Button size="sm" asChild className="shrink-0"><Link to="/app/savings">Créer</Link></Button>
         </Card>
-        <Card className="p-6 bg-gradient-card shadow-soft border-border/60 flex items-center justify-between">
-          <div>
-            <h3 className="font-semibold flex items-center gap-2"><TrendingUp className="size-4 text-primary" /> Investissez intelligemment</h3>
-            <p className="text-sm text-muted-foreground mt-1">Profil <strong>{profile?.risk_level ?? "?"}</strong>. Recommandations sur mesure.</p>
+        <Card className="p-4 md:p-6 bg-gradient-card shadow-soft border-border/60 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="font-semibold text-sm md:text-base flex items-center gap-2"><TrendingUp className="size-4 text-primary shrink-0" /> <span className="truncate">Investir</span></h3>
+            <p className="text-xs md:text-sm text-muted-foreground mt-1">Profil <strong>{profile?.risk_level ?? "?"}</strong>. Recos sur mesure.</p>
           </div>
-          <Button asChild><Link to="/app/investments">Découvrir</Link></Button>
+          <Button size="sm" asChild className="shrink-0"><Link to="/app/investments">Découvrir</Link></Button>
         </Card>
       </div>
     </div>

@@ -37,13 +37,15 @@ function AlertsPage() {
   };
 
   return (
-    <div className="p-6 md:p-10 max-w-3xl mx-auto space-y-6">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Alertes</h1>
-          <p className="text-sm text-muted-foreground mt-1">{alerts.filter(a => !a.is_read).length} non lue(s)</p>
+    <div className="p-4 md:p-10 max-w-3xl mx-auto space-y-5 md:space-y-6">
+      <header className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Alertes</h1>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">{alerts.filter(a => !a.is_read).length} non lue(s)</p>
         </div>
-        <Button variant="outline" size="sm" onClick={markAll}><Check className="size-4 mr-1" /> Tout marquer comme lu</Button>
+        <Button variant="outline" size="sm" onClick={markAll} className="shrink-0">
+          <Check className="size-4 md:mr-1" /> <span className="hidden sm:inline">Tout marquer lu</span>
+        </Button>
       </header>
       {alerts.length === 0 && <Card className="p-12 text-center text-muted-foreground shadow-soft">Pas d'alertes pour le moment.</Card>}
       <div className="space-y-3">

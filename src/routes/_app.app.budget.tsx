@@ -57,19 +57,19 @@ function BudgetPage() {
   };
 
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-6">
+    <div className="p-4 md:p-10 max-w-5xl mx-auto space-y-5 md:space-y-6">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight">Budget mensuel</h1>
-        <p className="text-sm text-muted-foreground mt-1">{now.toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}</p>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Budget mensuel</h1>
+        <p className="text-xs md:text-sm text-muted-foreground mt-1">{now.toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}</p>
       </header>
 
-      <Card className="p-6 shadow-soft border-border/60 bg-gradient-card">
-        <div className="flex items-end justify-between mb-3">
-          <div>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">Total dépensé</p>
-            <p className="text-3xl font-bold">{formatEUR(total.spent)} <span className="text-base text-muted-foreground font-normal">/ {formatEUR(total.planned)}</span></p>
+      <Card className="p-4 md:p-6 shadow-soft border-border/60 bg-gradient-card">
+        <div className="flex items-end justify-between gap-3 mb-3">
+          <div className="min-w-0">
+            <p className="text-[10px] md:text-xs uppercase tracking-wider text-muted-foreground">Total dépensé</p>
+            <p className="text-xl md:text-3xl font-bold truncate">{formatEUR(total.spent)} <span className="text-xs md:text-base text-muted-foreground font-normal">/ {formatEUR(total.planned)}</span></p>
           </div>
-          <Button onClick={save} disabled={busy} className="bg-gradient-primary border-0">{busy && <Loader2 className="size-4 mr-2 animate-spin" />}Enregistrer</Button>
+          <Button size="sm" onClick={save} disabled={busy} className="bg-gradient-primary border-0 shrink-0 md:size-default">{busy && <Loader2 className="size-4 mr-2 animate-spin" />}Enregistrer</Button>
         </div>
         <Progress value={total.planned > 0 ? Math.min(100, (total.spent/total.planned)*100) : 0} />
       </Card>
@@ -81,20 +81,22 @@ function BudgetPage() {
           const pct = b.planned_amount > 0 ? (used / Number(b.planned_amount)) * 100 : 0;
           const over = pct > 100;
           return (
-            <Card key={b.category} className="p-4 shadow-soft border-border/60">
-              <div className="flex items-center gap-4">
-                <div className="size-10 rounded-lg flex items-center justify-center" style={{ background: meta.color + "22", color: meta.color }}>
+            <Card key={b.category} className="p-3 md:p-4 shadow-soft border-border/60">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="size-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: meta.color + "22", color: meta.color }}>
                   <Icon className="size-4" />
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="font-medium">{meta.label}</p>
-                    <p className={`text-sm font-medium ${over ? "text-destructive" : "text-muted-foreground"}`}>
-                      {formatEUR(used)} / <Input type="number" value={b.planned_amount} onChange={e => {
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-medium text-sm md:text-base truncate">{meta.label}</p>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <span className={`text-xs md:text-sm font-medium ${over ? "text-destructive" : "text-muted-foreground"}`}>{formatEUR(used)}</span>
+                      <span className="text-xs text-muted-foreground">/</span>
+                      <Input type="number" inputMode="decimal" value={b.planned_amount} onChange={e => {
                         const v = parseFloat(e.target.value) || 0;
                         setBudgets(budgets.map((x, i) => i === idx ? {...x, planned_amount: v} : x));
-                      }} className="inline-block w-24 h-7 ml-1" />
-                    </p>
+                      }} className="w-20 md:w-24 h-7 text-xs md:text-sm px-2" />
+                    </div>
                   </div>
                   <Progress value={Math.min(100, pct)} className="mt-2" />
                 </div>

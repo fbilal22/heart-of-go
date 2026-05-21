@@ -54,14 +54,18 @@ function SavingsPage() {
   const del = async (id: string) => { await supabase.from("savings_goals").delete().eq("id", id); void load(); };
 
   return (
-    <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-6">
-      <header className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Mes objectifs d'épargne</h1>
-          <p className="text-sm text-muted-foreground mt-1">{goals.length} objectif(s)</p>
+    <div className="p-4 md:p-10 max-w-5xl mx-auto space-y-5 md:space-y-6">
+      <header className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Mes objectifs</h1>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1">{goals.length} objectif(s) d'épargne</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button className="bg-gradient-primary border-0"><Plus className="size-4 mr-1" /> Nouvel objectif</Button></DialogTrigger>
+          <DialogTrigger asChild>
+            <Button size="sm" className="bg-gradient-primary border-0 shrink-0 md:size-default">
+              <Plus className="size-4 md:mr-1" /> <span className="hidden sm:inline">Nouvel objectif</span>
+            </Button>
+          </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Nouvel objectif</DialogTitle></DialogHeader>
             <div className="space-y-3">
@@ -84,11 +88,11 @@ function SavingsPage() {
 
       {goals.length === 0 && <Card className="p-12 text-center text-muted-foreground shadow-soft">Aucun objectif. Créez-en un pour commencer ✨</Card>}
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3 md:gap-4 md:grid-cols-2">
         {goals.map(g => {
           const pct = Math.min(100, (Number(g.current_amount) / Number(g.target_amount)) * 100);
           return (
-            <Card key={g.id} className="p-6 shadow-soft border-border/60 bg-gradient-card">
+            <Card key={g.id} className="p-4 md:p-6 shadow-soft border-border/60 bg-gradient-card">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <span className="text-3xl">{g.emoji}</span>
@@ -104,10 +108,10 @@ function SavingsPage() {
                 <Progress value={pct} className="mt-2" />
                 <p className="text-xs text-muted-foreground mt-1">{Math.round(pct)}% atteint</p>
               </div>
-              <div className="mt-4 flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => contrib(g, 50)}>+50 €</Button>
-                <Button size="sm" variant="outline" onClick={() => contrib(g, 100)}>+100 €</Button>
-                <Button size="sm" variant="outline" onClick={() => contrib(g, -50)}>-50 €</Button>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Button size="sm" variant="outline" className="flex-1 min-w-[70px]" onClick={() => contrib(g, 50)}>+50 €</Button>
+                <Button size="sm" variant="outline" className="flex-1 min-w-[70px]" onClick={() => contrib(g, 100)}>+100 €</Button>
+                <Button size="sm" variant="outline" className="flex-1 min-w-[70px]" onClick={() => contrib(g, -50)}>-50 €</Button>
               </div>
             </Card>
           );
