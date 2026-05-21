@@ -156,11 +156,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         })}
       </nav>
 
-      <main
-        className="flex-1 min-w-0 pt-14 md:pt-0"
-        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 4.5rem)" }}
-      >
-        <div className="md:[&]:!pb-0" style={{ minHeight: "100%" }}>{children}</div>
+      <main className="flex-1 min-w-0 pt-14 md:pt-0 pb-[calc(env(safe-area-inset-bottom)+4.5rem)] md:pb-0">
+        {children}
       </main>
     </div>
   );
