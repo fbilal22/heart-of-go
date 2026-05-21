@@ -9,12 +9,21 @@ import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 const NAV = [
-  { to: "/app", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
-  { to: "/app/transactions", label: "Transactions", icon: ArrowLeftRight },
+  { to: "/app", label: "Tableau de bord", short: "Accueil", icon: LayoutDashboard, exact: true },
+  { to: "/app/transactions", label: "Transactions", short: "Opés", icon: ArrowLeftRight },
+  { to: "/app/budget", label: "Budget", short: "Budget", icon: Wallet },
+  { to: "/app/savings", label: "Épargne", short: "Épargne", icon: Target },
+  { to: "/app/investments", label: "Investir", short: "Invest", icon: TrendingUp },
+  { to: "/app/chat", label: "Assistant IA", short: "IA", icon: MessageCircle },
+] as const;
+
+// 5 items optimisés pour la barre mobile (icônes seulement)
+const MOBILE_NAV = [
+  { to: "/app", label: "Accueil", icon: LayoutDashboard, exact: true },
+  { to: "/app/transactions", label: "Opés", icon: ArrowLeftRight },
   { to: "/app/budget", label: "Budget", icon: Wallet },
-  { to: "/app/savings", label: "Épargne", icon: Target },
-  { to: "/app/investments", label: "Investir", icon: TrendingUp },
-  { to: "/app/chat", label: "Assistant IA", icon: MessageCircle },
+  { to: "/app/chat", label: "IA", icon: MessageCircle },
+  { to: "/app/alerts", label: "Alertes", icon: Bell, badge: true as const },
 ] as const;
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -93,26 +102,66 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
+      {/* Mobile top bar */}
+      <header className="md:hidden fixed top-0 inset-x-0 z-40 h-14 bg-sidebar/95 backdrop-blur text-sidebar-foreground border-b border-sidebar-border flex items-center justify-between px-4">
+        <Link to="/app" className="flex items-center gap-2">
+          <div className="size-8 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow">
+            <Sparkles className="size-4 text-primary-foreground" />
+          </div>
+          <span className="font-semibold tracking-tight">Pécule</span>
+        </Link>
+        <div className="flex items-center gap-1">
+          <Link to="/app/alerts" className="relative size-9 rounded-lg flex items-center justify-center hover:bg-sidebar-accent">
+            <Bell className="size-5" />
+            {unread > 0 && (
+              <span className="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 rounded-full bg-warning text-warning-foreground text-[10px] font-semibold flex items-center justify-center">
+                {unread > 9 ? "9+" : unread}
+              </span>
+            )}
+          </Link>
+          <button onClick={handleSignOut} className="size-9 rounded-lg flex items-center justify-center hover:bg-sidebar-accent" aria-label="Déconnexion">
+            <LogOut className="size-5" />
+          </button>
+        </div>
+      </header>
+
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-sidebar text-sidebar-foreground border-t border-sidebar-border flex justify-around py-2">
-        {NAV.slice(0, 5).map((item) => {
+      <nav
+        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-sidebar/95 backdrop-blur text-sidebar-foreground border-t border-sidebar-border grid grid-cols-5"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}
+      >
+        {MOBILE_NAV.map((item) => {
           const isExact = "exact" in item && item.exact;
           const active = isExact ? location.pathname === item.to : location.pathname.startsWith(item.to);
           const Icon = item.icon;
+          const showBadge = "badge" in item && item.badge && unread > 0;
           return (
             <Link key={item.to} to={item.to}
               className={cn(
-                "flex flex-col items-center gap-1 px-3 py-1 rounded-md text-[10px] font-medium",
-                active ? "text-primary-glow" : "text-sidebar-foreground/60"
+                "flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-medium transition-colors relative",
+                active ? "text-primary-glow" : "text-sidebar-foreground/60 hover:text-sidebar-foreground"
               )}>
-              <Icon className="size-5" />
-              {item.label.split(" ")[0]}
+              <span className="relative">
+                <Icon className="size-5" />
+                {showBadge && (
+                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-1 rounded-full bg-warning text-warning-foreground text-[9px] font-semibold flex items-center justify-center">
+                    {unread > 9 ? "9+" : unread}
+                  </span>
+                )}
+                {active && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 size-1 rounded-full bg-primary-glow" />}
+              </span>
+              {item.label}
             </Link>
           );
         })}
       </nav>
 
-      <main className="flex-1 min-w-0 pb-20 md:pb-0">{children}</main>
+      <main
+        className="flex-1 min-w-0 pt-14 md:pt-0"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 4.5rem)" }}
+      >
+        <div className="md:[&]:!pb-0" style={{ minHeight: "100%" }}>{children}</div>
+      </main>
     </div>
   );
 }
