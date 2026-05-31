@@ -27,21 +27,32 @@ function TransactionsPage() {
   const [accounts, setAccounts] = useState<Array<{id:string;account_name:string}>>([]);
   const [q, setQ] = useState("");
   const [filter, setFilter] = useState<string>("ALL");
+  const [period, setPeriod] = useState<MonthValue>(() => currentMonth());
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [form, setForm] = useState({ label: "", amount: "", date: new Date().toISOString().slice(0,10), category: "OTHER" as Category, accountId: "" });
+  const [form, setForm] = useState({
+    type: "EXPENSE" as "EXPENSE" | "INCOME",
+    label: "",
+    amount: "",
+    date: new Date().toISOString().slice(0,10),
+    category: "OTHER" as Category,
+    accountId: "",
+  });
 
   const load = async () => {
     if (!user) return;
+    const { startISO, endISO } = monthRange(period);
     const [{ data: t }, { data: a }] = await Promise.all([
-      supabase.from("transactions").select("*").eq("user_id", user.id).order("transaction_date", { ascending: false }).limit(500),
+      supabase.from("transactions").select("*").eq("user_id", user.id)
+        .gte("transaction_date", startISO).lt("transaction_date", endISO)
+        .order("transaction_date", { ascending: false }).limit(500),
       supabase.from("bank_accounts").select("id,account_name").eq("user_id", user.id),
     ]);
     setTxs((t as Tx[]) ?? []);
     setAccounts(a ?? []);
     if (a?.[0] && !form.accountId) setForm(f => ({...f, accountId: a[0].id}));
   };
-  useEffect(() => { void load(); /* eslint-disable-next-line */ }, [user]);
+  useEffect(() => { void load(); /* eslint-disable-next-line */ }, [user, period]);
 
   const filtered = useMemo(() => {
     return txs.filter(t => {
