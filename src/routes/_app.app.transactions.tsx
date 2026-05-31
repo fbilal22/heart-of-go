@@ -104,14 +104,29 @@ function TransactionsPage() {
     const cat = form.type === "INCOME"
       ? (form.category === "OTHER" ? "SALARY" : form.category)
       : (form.category === "OTHER" ? categorize(form.label).category : form.category);
-    const { error } = await supabase.from("transactions").insert({
-      user_id: user.id, account_id: form.accountId, amount: signed, label: form.label,
-      category: cat, transaction_date: form.date, is_recurring: false, is_unexpected: false,
-    });
+    const payload = {
+      account_id: form.accountId, amount: signed, label: form.label,
+      category: cat, transaction_date: form.date,
+    };
+    const { error } = editingId
+      ? await supabase.from("transactions").update(payload).eq("id", editingId).eq("user_id", user.id)
+      : await supabase.from("transactions").insert({ ...payload, user_id: user.id, is_recurring: false, is_unexpected: false });
     setBusy(false);
     if (error) return toast.error(error.message);
-    toast.success(form.type === "INCOME" ? "Revenu ajouté" : "Dépense ajoutée");
-    setOpen(false); setForm(f => ({...f, label: "", amount: ""}));
+    toast.success(editingId ? "Opération modifiée" : (form.type === "INCOME" ? "Revenu ajouté" : "Dépense ajoutée"));
+    setOpen(false); setEditingId(null);
+    void load();
+  };
+
+  const remove = async () => {
+    if (!user || !editingId) return;
+    if (!confirm("Supprimer cette opération ?")) return;
+    setBusy(true);
+    const { error } = await supabase.from("transactions").delete().eq("id", editingId).eq("user_id", user.id);
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Opération supprimée");
+    setOpen(false); setEditingId(null);
     void load();
   };
 
