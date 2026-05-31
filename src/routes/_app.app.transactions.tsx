@@ -95,17 +95,32 @@ function TransactionsPage() {
     return { rows, total };
   }, [filtered]);
 
+  const ensureAccountId = async (): Promise<string | null> => {
+    if (form.accountId) return form.accountId;
+    if (accounts[0]) return accounts[0].id;
+    if (!user) return null;
+    const { data, error } = await supabase.from("bank_accounts").insert({
+      user_id: user.id, account_name: "Compte manuel", bank_name: "Manuel",
+      account_type: "CHECKING", currency: "EUR", balance: 0, is_mock: false,
+    }).select("id,account_name").single();
+    if (error || !data) { toast.error(error?.message ?? "Impossible de créer le compte"); return null; }
+    setAccounts([{ id: data.id, account_name: data.account_name }]);
+    return data.id;
+  };
+
   const submit = async () => {
-    if (!user || !form.accountId || !form.label || !form.amount) return toast.error("Remplissez tous les champs.");
+    if (!user || !form.label || !form.amount) return toast.error("Renseignez le libellé et le montant.");
     setBusy(true);
     const raw = Math.abs(parseFloat(form.amount));
     if (!raw || Number.isNaN(raw)) { setBusy(false); return toast.error("Montant invalide."); }
+    const accountId = await ensureAccountId();
+    if (!accountId) { setBusy(false); return; }
     const signed = form.type === "INCOME" ? raw : -raw;
     const cat = form.type === "INCOME"
       ? (form.category === "OTHER" ? "SALARY" : form.category)
       : (form.category === "OTHER" ? categorize(form.label).category : form.category);
     const payload = {
-      account_id: form.accountId, amount: signed, label: form.label,
+      account_id: accountId, amount: signed, label: form.label,
       category: cat, transaction_date: form.date,
     };
     const { error } = editingId
