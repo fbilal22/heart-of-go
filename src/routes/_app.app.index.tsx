@@ -94,11 +94,12 @@ function Dashboard() {
 
   return (
     <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-5 md:space-y-8">
-      <header className="flex items-end justify-between flex-wrap gap-4 md:block">
+      <header className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <p className="text-sm text-muted-foreground">Bonjour {profile?.first_name} 👋</p>
           <h1 className="text-xl md:text-4xl font-bold tracking-tight mt-0.5 md:mt-1">Tableau de bord</h1>
         </div>
+        <MonthPicker value={period} onChange={setPeriod} />
       </header>
 
       {/* Hero solde — full width sur mobile */}
