@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { CATEGORY_META, formatEUR, type Category, DEFAULT_BUDGETS } from "@/lib/finance";
+import { MonthPicker, monthRange, currentMonth, type MonthValue } from "@/components/finance/MonthPicker";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
