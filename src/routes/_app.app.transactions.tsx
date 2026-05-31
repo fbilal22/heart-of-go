@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { CATEGORIES, CATEGORY_META, categorize, formatEUR, type Category } from "@/lib/finance";
 import { MonthPicker, monthRange, currentMonth, type MonthValue } from "@/components/finance/MonthPicker";
-import { Plus, Search, AlertCircle, Loader2, Link2, ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { Plus, Search, AlertCircle, Loader2, Link2, ArrowDownRight, ArrowUpRight, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 
