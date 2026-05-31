@@ -195,9 +195,9 @@ function TransactionsPage() {
                       <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{CATEGORY_META[c].label}</SelectItem>)}</SelectContent>
                     </Select></div>
-                  <div><Label>Compte</Label>
+                  <div><Label>Compte <span className="text-muted-foreground font-normal">(optionnel)</span></Label>
                     <Select value={form.accountId} onValueChange={(v) => setForm({...form, accountId: v})}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectTrigger><SelectValue placeholder={accounts.length ? "Choisir…" : "Compte manuel"} /></SelectTrigger>
                       <SelectContent>{accounts.map(a => <SelectItem key={a.id} value={a.id}>{a.account_name}</SelectItem>)}</SelectContent>
                     </Select></div>
                 </div>
