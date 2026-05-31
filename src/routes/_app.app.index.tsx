@@ -90,62 +90,107 @@ function Dashboard() {
   const recent = txs.slice(0, 6);
 
   return (
-    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-6 md:space-y-8">
-      <header className="flex items-end justify-between flex-wrap gap-4">
+    <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-5 md:space-y-8">
+      <header className="flex items-end justify-between flex-wrap gap-4 md:block">
         <div>
           <p className="text-sm text-muted-foreground">Bonjour {profile?.first_name} 👋</p>
-          <h1 className="text-2xl md:text-4xl font-bold tracking-tight mt-1">Tableau de bord</h1>
+          <h1 className="text-xl md:text-4xl font-bold tracking-tight mt-0.5 md:mt-1">Tableau de bord</h1>
         </div>
       </header>
 
-      <div className="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-4">
+      {/* Hero solde — full width sur mobile */}
+      <Card className="md:hidden p-5 bg-gradient-hero text-sidebar-foreground border-0 shadow-elegant overflow-hidden relative">
+        <div className="absolute -right-8 -top-8 size-32 rounded-full bg-primary-glow/20 blur-2xl" />
+        <p className="text-[10px] uppercase tracking-wider text-sidebar-foreground/70 font-medium">Solde total</p>
+        <p className="mt-1.5 text-3xl font-bold tracking-tight">{formatEUR(totalBalance)}</p>
+        <p className="mt-1 text-xs text-sidebar-foreground/60">{accounts.length} compte(s)</p>
+        <div className="mt-4 grid grid-cols-2 gap-3 text-sm relative">
+          <div className="flex items-center gap-2">
+            <div className="size-7 rounded-lg bg-success/20 text-success flex items-center justify-center"><ArrowUpRight className="size-3.5" /></div>
+            <div className="min-w-0">
+              <p className="text-[10px] text-sidebar-foreground/60">Revenus</p>
+              <p className="font-semibold truncate">{formatEUR(stats.totalIncome)}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="size-7 rounded-lg bg-destructive/20 text-destructive-foreground flex items-center justify-center"><ArrowDownRight className="size-3.5" /></div>
+            <div className="min-w-0">
+              <p className="text-[10px] text-sidebar-foreground/60">Dépenses</p>
+              <p className="font-semibold truncate">{formatEUR(stats.totalExpenses)}</p>
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      <div className="hidden md:grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-4">
         <StatCard label="Solde total" value={formatEUR(totalBalance)} icon={Wallet} hint={`${accounts.length} comptes`} tone="primary" />
         <StatCard label="Revenus du mois" value={formatEUR(stats.totalIncome)} icon={ArrowUpRight} tone="success" />
         <StatCard label="Dépenses du mois" value={formatEUR(stats.totalExpenses)} icon={ArrowDownRight} tone="destructive" />
         <StatCard label="Épargné ce mois" value={formatEUR(stats.savingsAmount)} icon={PiggyBank} tone="primary" hint={`${Math.round(health.savingsRate*100)}% de vos revenus`} />
       </div>
 
+      {/* Stats secondaires mobile : Épargne */}
+      <div className="md:hidden grid grid-cols-2 gap-3">
+        <StatCard label="Épargné" value={formatEUR(stats.savingsAmount)} icon={PiggyBank} tone="primary" hint={`${Math.round(health.savingsRate*100)}% des revenus`} />
+        <StatCard label="Imprévues" value={formatEUR(stats.unexpectedExpenses)} icon={AlertTriangle} tone="warning" hint={`${stats.exceeded} budget(s) dépassé(s)`} />
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Health */}
-        <Card className="p-6 shadow-soft border-border/60 lg:col-span-1">
-          <h2 className="text-lg font-semibold mb-2">Santé financière</h2>
-          <p className="text-sm text-muted-foreground mb-6">Un score qui résume comment se passe votre mois.</p>
-          <HealthRing score={health.score} label={health.label} tone={health.tone} />
-          {health.mainIssue ? (
-            <div className="mt-6 p-3 rounded-lg bg-warning/10 text-sm text-foreground/80 flex gap-2">
-              <AlertTriangle className="size-4 text-warning-foreground shrink-0 mt-0.5" />
-              <span>{health.mainIssue}</span>
+        <Card className="p-4 md:p-6 shadow-soft border-border/60 lg:col-span-1">
+          <h2 className="text-base md:text-lg font-semibold mb-1 md:mb-2">Santé financière</h2>
+          <p className="hidden md:block text-sm text-muted-foreground mb-6">Un score qui résume comment se passe votre mois.</p>
+          <div className="flex md:block items-center gap-4 md:gap-0 mt-2 md:mt-0">
+            <div className="md:hidden"><HealthRing score={health.score} label={health.label} tone={health.tone} size={96} /></div>
+            <div className="hidden md:block"><HealthRing score={health.score} label={health.label} tone={health.tone} /></div>
+            <div className="flex-1 md:hidden">
+              {health.mainIssue ? (
+                <div className="p-3 rounded-lg bg-warning/10 text-xs text-foreground/80 flex gap-2">
+                  <AlertTriangle className="size-4 text-warning-foreground shrink-0 mt-0.5" />
+                  <span>{health.mainIssue}</span>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">Tout va bien ce mois-ci 🎉</p>
+              )}
             </div>
-          ) : (
-            <p className="mt-6 text-sm text-muted-foreground text-center">Tout va bien ce mois-ci 🎉</p>
-          )}
+          </div>
+          <div className="hidden md:block">
+            {health.mainIssue ? (
+              <div className="mt-6 p-3 rounded-lg bg-warning/10 text-sm text-foreground/80 flex gap-2">
+                <AlertTriangle className="size-4 text-warning-foreground shrink-0 mt-0.5" />
+                <span>{health.mainIssue}</span>
+              </div>
+            ) : (
+              <p className="mt-6 text-sm text-muted-foreground text-center">Tout va bien ce mois-ci 🎉</p>
+            )}
+          </div>
         </Card>
 
         {/* Pie spending */}
-        <Card className="p-6 shadow-soft border-border/60 lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Dépenses par catégorie</h2>
-            <Button asChild variant="ghost" size="sm"><Link to="/app/budget">Voir le budget</Link></Button>
+        <Card className="p-4 md:p-6 shadow-soft border-border/60 lg:col-span-2">
+          <div className="flex items-center justify-between mb-3 md:mb-4">
+            <h2 className="text-base md:text-lg font-semibold">Dépenses par catégorie</h2>
+            <Button asChild variant="ghost" size="sm" className="h-8 text-xs"><Link to="/app/budget">Budget →</Link></Button>
           </div>
           {pieData.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-12 text-center">Pas encore de dépenses ce mois-ci.</p>
+            <p className="text-sm text-muted-foreground py-10 text-center">Pas encore de dépenses ce mois-ci.</p>
           ) : (
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="h-56">
+            <div className="grid md:grid-cols-2 gap-3 md:gap-4 items-center">
+              <div className="h-44 md:h-56">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={50} outerRadius={85} paddingAngle={2}>
+                    <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={42} outerRadius={75} paddingAngle={2}>
                       {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
                     </Pie>
                     <Tooltip formatter={(v: number) => formatEUR(v)} contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8 }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <ul className="space-y-2 text-sm">
-                {pieData.slice(0, 6).map((d) => (
-                  <li key={d.name} className="flex items-center justify-between">
-                    <span className="flex items-center gap-2"><span className="size-3 rounded-sm" style={{ background: d.color }} />{d.name}</span>
-                    <span className="font-medium">{formatEUR(d.value)}</span>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+                {pieData.slice(0, 5).map((d) => (
+                  <li key={d.name} className="flex items-center justify-between gap-2">
+                    <span className="flex items-center gap-2 min-w-0"><span className="size-2.5 rounded-sm shrink-0" style={{ background: d.color }} /><span className="truncate">{d.name}</span></span>
+                    <span className="font-semibold shrink-0">{formatEUR(d.value)}</span>
                   </li>
                 ))}
               </ul>
@@ -156,14 +201,14 @@ function Dashboard() {
 
       {/* 7 days chart + recent */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card className="p-6 shadow-soft border-border/60 lg:col-span-2">
-          <h2 className="text-lg font-semibold mb-4">Dépenses des 7 derniers jours</h2>
-          <div className="h-56">
+        <Card className="p-4 md:p-6 shadow-soft border-border/60 lg:col-span-2">
+          <h2 className="text-base md:text-lg font-semibold mb-3 md:mb-4">7 derniers jours</h2>
+          <div className="h-44 md:h-56 -ml-2">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={last7}>
+              <BarChart data={last7} margin={{ top: 5, right: 5, left: 0, bottom: 0 }}>
                 <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={12} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={12} />
+                <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="var(--muted-foreground)" fontSize={11} width={40} tickLine={false} axisLine={false} />
                 <Tooltip formatter={(v: number) => formatEUR(v)} contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8 }} />
                 <Bar dataKey="depenses" fill="var(--primary)" radius={[6, 6, 0, 0]} />
               </BarChart>
@@ -171,26 +216,26 @@ function Dashboard() {
           </div>
         </Card>
 
-        <Card className="p-6 shadow-soft border-border/60">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Dernières transactions</h2>
-            <Button asChild variant="ghost" size="sm"><Link to="/app/transactions">Voir tout</Link></Button>
+        <Card className="p-4 md:p-6 shadow-soft border-border/60">
+          <div className="flex items-center justify-between mb-3 md:mb-4">
+            <h2 className="text-base md:text-lg font-semibold">Dernières opérations</h2>
+            <Button asChild variant="ghost" size="sm" className="h-8 text-xs"><Link to="/app/transactions">Voir tout →</Link></Button>
           </div>
-          <ul className="space-y-3">
+          <ul className="space-y-2.5 md:space-y-3">
             {recent.length === 0 && <li className="text-sm text-muted-foreground">Pas de transactions.</li>}
             {recent.map((t) => {
               const meta = CATEGORY_META[t.category];
               const Icon = meta.icon;
               return (
                 <li key={t.id} className="flex items-center gap-3">
-                  <div className="size-9 rounded-lg flex items-center justify-center" style={{ background: meta.color + "22", color: meta.color }}>
+                  <div className="size-9 rounded-lg flex items-center justify-center shrink-0" style={{ background: meta.color + "22", color: meta.color }}>
                     <Icon className="size-4" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{t.label}</p>
                     <p className="text-xs text-muted-foreground">{new Date(t.transaction_date).toLocaleDateString("fr-FR")}</p>
                   </div>
-                  <span className={`text-sm font-semibold ${t.amount > 0 ? "text-success" : ""}`}>
+                  <span className={`text-sm font-semibold shrink-0 ${t.amount > 0 ? "text-success" : ""}`}>
                     {formatEUR(t.amount, { sign: true })}
                   </span>
                 </li>

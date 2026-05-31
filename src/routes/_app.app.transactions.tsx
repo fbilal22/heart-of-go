@@ -82,14 +82,21 @@ function TransactionsPage() {
     <div className="p-4 md:p-10 max-w-6xl mx-auto space-y-5 md:space-y-6">
       <header className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Transactions</h1>
+          <h1 className="text-xl md:text-3xl font-bold tracking-tight">Transactions</h1>
           <p className="text-xs md:text-sm text-muted-foreground mt-1">{filtered.length} opérations</p>
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button size="sm" className="bg-gradient-primary border-0 shrink-0 md:size-default">
-              <Plus className="size-4 md:mr-1" /> <span className="hidden sm:inline">Ajouter</span>
-            </Button>
+            <>
+              {/* Bouton classique sur desktop */}
+              <Button size="default" className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
+                <Plus className="size-4 mr-1" /> Ajouter
+              </Button>
+              {/* FAB sur mobile */}
+              <Button size="icon" className="md:hidden fixed right-4 fab-bottom z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Ajouter une transaction">
+                <Plus className="size-6" />
+              </Button>
+            </>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Nouvelle transaction</DialogTitle></DialogHeader>
@@ -119,13 +126,13 @@ function TransactionsPage() {
         </Dialog>
       </header>
 
-      <Card className="p-4 shadow-soft border-border/60 flex flex-wrap gap-3">
-        <div className="relative flex-1 min-w-[200px]">
+      <Card className="p-3 md:p-4 shadow-soft border-border/60 flex gap-2 md:gap-3">
+        <div className="relative flex-1 min-w-0">
           <Search className="size-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <Input value={q} onChange={e => setQ(e.target.value)} placeholder="Rechercher…" className="pl-9" />
         </div>
         <Select value={filter} onValueChange={setFilter}>
-          <SelectTrigger className="w-48"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-32 md:w-48 shrink-0"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">Toutes les catégories</SelectItem>
             {CATEGORIES.map(c => <SelectItem key={c} value={c}>{CATEGORY_META[c].label}</SelectItem>)}
