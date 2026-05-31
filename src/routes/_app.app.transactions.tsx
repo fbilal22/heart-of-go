@@ -156,7 +156,15 @@ function TransactionsPage() {
               </>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Nouvelle opération</DialogTitle></DialogHeader>
+          <Button size="default" onClick={openCreate} className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
+            <Plus className="size-4 mr-1" /> Ajouter
+          </Button>
+          <Button size="icon" onClick={openCreate} className="md:hidden fixed right-4 fab-bottom z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Ajouter une transaction">
+            <Plus className="size-6" />
+          </Button>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditingId(null); }}>
+            <DialogContent>
+              <DialogHeader><DialogTitle>{editingId ? "Modifier l'opération" : "Nouvelle opération"}</DialogTitle></DialogHeader>
               <div className="space-y-3">
                 {/* Toggle Dépense / Revenu */}
                 <div className="grid grid-cols-2 gap-2 p-1 rounded-lg bg-muted">
@@ -193,7 +201,12 @@ function TransactionsPage() {
                     </Select></div>
                 </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="gap-2 sm:justify-between">
+                {editingId ? (
+                  <Button variant="outline" onClick={remove} disabled={busy} className="text-destructive hover:text-destructive">
+                    <Trash2 className="size-4 mr-1.5" /> Supprimer
+                  </Button>
+                ) : <span />}
                 <Button onClick={submit} disabled={busy} className="bg-gradient-primary border-0">{busy && <Loader2 className="size-4 mr-2 animate-spin" />}Enregistrer</Button>
               </DialogFooter>
             </DialogContent>
