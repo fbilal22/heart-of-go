@@ -142,20 +142,6 @@ function TransactionsPage() {
           <Link to="/app/connect" className="shrink-0 inline-flex items-center gap-1.5 text-xs md:text-sm px-3 py-2 rounded-lg border border-border/60 bg-card hover:bg-muted/50 transition-colors font-medium">
             <Link2 className="size-3.5" /> <span className="hidden sm:inline">Connecter ma banque</span><span className="sm:hidden">Banque</span>
           </Link>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <>
-                {/* Bouton classique sur desktop */}
-                <Button size="default" className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
-                  <Plus className="size-4 mr-1" /> Ajouter
-                </Button>
-                {/* FAB sur mobile */}
-                <Button size="icon" className="md:hidden fixed right-4 fab-bottom z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Ajouter une transaction">
-                  <Plus className="size-6" />
-                </Button>
-              </>
-            </DialogTrigger>
-            <DialogContent>
           <Button size="default" onClick={openCreate} className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
             <Plus className="size-4 mr-1" /> Ajouter
           </Button>
