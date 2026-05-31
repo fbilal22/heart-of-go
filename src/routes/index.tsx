@@ -24,82 +24,89 @@ function Landing() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-border/60">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-30 border-b border-border/60 bg-background/85 backdrop-blur-xl safe-top">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="size-8 rounded-lg bg-gradient-primary flex items-center justify-center shadow-glow">
               <Sparkles className="size-4 text-primary-foreground" />
             </div>
-            <span className="font-semibold text-lg tracking-tight">FinanceApp</span>
+            <span className="font-semibold text-base md:text-lg tracking-tight">FinanceApp</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Button asChild variant="ghost"><Link to="/auth">Se connecter</Link></Button>
-            <Button asChild className="bg-gradient-primary border-0 shadow-soft"><Link to="/auth">Commencer</Link></Button>
+          <div className="flex items-center gap-1.5 md:gap-2">
+            <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex"><Link to="/auth">Se connecter</Link></Button>
+            <Button asChild size="sm" className="bg-gradient-primary border-0 shadow-soft"><Link to="/auth">Commencer</Link></Button>
           </div>
         </div>
       </header>
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-hero opacity-[0.04]" />
-        <div className="relative max-w-6xl mx-auto px-6 py-24 md:py-32 text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium mb-6">
+        <div className="absolute inset-0 bg-gradient-hero opacity-[0.05]" />
+        <div className="absolute top-1/3 -right-20 size-64 rounded-full bg-primary/15 blur-3xl pointer-events-none" />
+        <div className="absolute top-10 -left-20 size-56 rounded-full bg-primary-glow/15 blur-3xl pointer-events-none" />
+        <div className="relative max-w-6xl mx-auto px-5 md:px-6 py-14 md:py-32 text-center">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-[11px] md:text-xs font-medium mb-5 md:mb-6">
             <ShieldCheck className="size-3.5" /> Sécurisé · Pour les 24–35 ans
           </span>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-            Reprenez le contrôle <br/>
+          <h1 className="text-[2.25rem] leading-[1.05] md:text-7xl font-bold tracking-tight">
+            Reprenez le contrôle <br className="hidden sm:inline"/>
             de vos <span className="text-gradient">finances</span>.
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="mt-5 md:mt-6 text-base md:text-xl text-muted-foreground max-w-2xl mx-auto px-2">
             Une app simple pour savoir où passe votre argent, épargner régulièrement
             et faire fructifier ce que vous mettez de côté.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-3">
-            <Button asChild size="lg" className="bg-gradient-primary border-0 shadow-elegant h-12 px-6">
+          <div className="mt-8 md:mt-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 max-w-sm sm:max-w-none mx-auto">
+            <Button asChild size="lg" className="bg-gradient-primary border-0 shadow-elegant h-12 px-6 active:scale-[0.98] transition-transform">
               <Link to="/auth">Créer mon compte gratuit <ArrowRight className="size-4 ml-1" /></Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-12 px-6">
               <Link to="/auth">J'ai déjà un compte</Link>
             </Button>
           </div>
+          <div className="mt-8 md:mt-10 flex items-center justify-center gap-5 md:gap-8 text-[11px] md:text-xs text-muted-foreground">
+            <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-success" /> Gratuit</span>
+            <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-primary" /> Sans CB</span>
+            <span className="flex items-center gap-1.5"><span className="size-1.5 rounded-full bg-primary-glow" /> 1 minute</span>
+          </div>
         </div>
       </section>
 
       {/* Pillars */}
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-center">
+      <section className="max-w-6xl mx-auto px-5 md:px-6 py-14 md:py-20">
+        <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-center">
           Quatre piliers pour des finances saines
         </h2>
-        <p className="mt-3 text-center text-muted-foreground max-w-2xl mx-auto">
+        <p className="mt-2.5 md:mt-3 text-sm md:text-base text-center text-muted-foreground max-w-2xl mx-auto">
           Conçu autour de besoins réels validés avec des jeunes actifs.
         </p>
-        <div className="mt-12 grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="mt-8 md:mt-12 grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           {PILLARS.map((p) => (
-            <Card key={p.title} className="p-6 bg-gradient-card shadow-soft border-border/50 hover:shadow-elegant transition-shadow">
-              <div className="size-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <p.icon className="size-5" />
+            <Card key={p.title} className="p-4 md:p-6 bg-gradient-card shadow-soft border-border/50 md:hover:shadow-elegant transition-shadow">
+              <div className="size-9 md:size-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+                <p.icon className="size-4 md:size-5" />
               </div>
-              <h3 className="mt-4 text-lg font-semibold">{p.title}</h3>
-              <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
+              <h3 className="mt-3 md:mt-4 text-base md:text-lg font-semibold">{p.title}</h3>
+              <p className="mt-1 md:mt-1.5 text-xs md:text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
             </Card>
           ))}
         </div>
       </section>
 
       <section className="bg-gradient-hero text-sidebar-foreground">
-        <div className="max-w-4xl mx-auto px-6 py-20 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Prêt·e à y voir clair ?</h2>
-          <p className="mt-4 text-sidebar-foreground/70 max-w-xl mx-auto">
+        <div className="max-w-4xl mx-auto px-5 md:px-6 py-14 md:py-20 text-center">
+          <h2 className="text-2xl md:text-4xl font-bold tracking-tight">Prêt·e à y voir clair ?</h2>
+          <p className="mt-3 md:mt-4 text-sm md:text-base text-sidebar-foreground/70 max-w-xl mx-auto">
             Créez votre compte en moins d'une minute. On charge des données de démo
             pour que vous voyiez l'app en action immédiatement.
           </p>
-          <Button asChild size="lg" className="mt-8 bg-gradient-primary border-0 shadow-glow h-12 px-6">
+          <Button asChild size="lg" className="mt-6 md:mt-8 bg-gradient-primary border-0 shadow-glow h-12 px-6 w-full max-w-sm sm:w-auto">
             <Link to="/auth">Démarrer maintenant <ArrowRight className="size-4 ml-1" /></Link>
           </Button>
         </div>
       </section>
 
-      <footer className="border-t border-border/60 py-8 text-center text-sm text-muted-foreground">
+      <footer className="border-t border-border/60 py-6 md:py-8 text-center text-xs md:text-sm text-muted-foreground px-4">
         FinanceApp · Vos données restent les vôtres.
       </footer>
     </div>
