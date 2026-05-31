@@ -20,18 +20,18 @@ type Budget = { id?: string; category: Category; planned_amount: number };
 
 function BudgetPage() {
   const { user } = useAuth();
-  const now = new Date();
-  const month = now.getMonth() + 1; const year = now.getFullYear();
+  const [period, setPeriod] = useState<MonthValue>(() => currentMonth());
+  const { month, year } = period;
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [spent, setSpent] = useState<Record<string, number>>({});
   const [busy, setBusy] = useState(false);
 
   const load = async () => {
     if (!user) return;
-    const start = `${year}-${String(month).padStart(2,"0")}-01`;
+    const { startISO, endISO } = monthRange(period);
     const [{ data: b }, { data: t }] = await Promise.all([
       supabase.from("budgets").select("*").eq("user_id", user.id).eq("month", month).eq("year", year),
-      supabase.from("transactions").select("category,amount").eq("user_id", user.id).gte("transaction_date", start).lt("amount", 0),
+      supabase.from("transactions").select("category,amount").eq("user_id", user.id).gte("transaction_date", startISO).lt("transaction_date", endISO).lt("amount", 0),
     ]);
     let list = (b ?? []) as Budget[];
     if (list.length === 0) list = DEFAULT_BUDGETS.map(d => ({ category: d.category, planned_amount: d.amount }));
@@ -40,7 +40,7 @@ function BudgetPage() {
     for (const x of (t ?? [])) sp[x.category] = (sp[x.category] ?? 0) + Math.abs(Number(x.amount));
     setSpent(sp);
   };
-  useEffect(() => { void load(); /* eslint-disable-next-line */ }, [user]);
+  useEffect(() => { void load(); /* eslint-disable-next-line */ }, [user, period]);
 
   const total = useMemo(() => ({
     planned: budgets.reduce((s, b) => s + Number(b.planned_amount), 0),
@@ -57,11 +57,16 @@ function BudgetPage() {
     void load();
   };
 
+  const periodLabel = new Date(year, month - 1, 1).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+
   return (
     <div className="p-4 md:p-10 max-w-5xl mx-auto space-y-5 md:space-y-6">
-      <header>
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Budget mensuel</h1>
-        <p className="text-xs md:text-sm text-muted-foreground mt-1">{now.toLocaleDateString("fr-FR", { month: "long", year: "numeric" })}</p>
+      <header className="flex items-end justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Budget mensuel</h1>
+          <p className="text-xs md:text-sm text-muted-foreground mt-1 capitalize">{periodLabel}</p>
+        </div>
+        <MonthPicker value={period} onChange={setPeriod} />
       </header>
 
       <Card className="p-4 md:p-6 shadow-soft border-border/60 bg-gradient-card">
