@@ -254,7 +254,7 @@ function TransactionsPage() {
         {filtered.map(t => {
           const meta = CATEGORY_META[t.category]; const Icon = meta.icon;
           return (
-            <div key={t.id} className="flex items-center gap-4 p-4">
+            <button key={t.id} type="button" onClick={() => openEdit(t)} className="w-full flex items-center gap-4 p-4 text-left hover:bg-muted/40 transition-colors">
               <div className="size-10 rounded-lg flex items-center justify-center" style={{ background: meta.color + "22", color: meta.color }}>
                 <Icon className="size-4" />
               </div>
@@ -266,7 +266,7 @@ function TransactionsPage() {
                 <p className="text-xs text-muted-foreground">{meta.label} · {new Date(t.transaction_date).toLocaleDateString("fr-FR")}</p>
               </div>
               <span className={`font-semibold ${t.amount > 0 ? "text-success" : ""}`}>{formatEUR(t.amount, { sign: true })}</span>
-            </div>
+            </button>
           );
         })}
       </Card>
