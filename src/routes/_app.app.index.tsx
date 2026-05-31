@@ -8,6 +8,7 @@ import { HealthRing } from "@/components/finance/HealthRing";
 import { ArrowDownRight, ArrowUpRight, Wallet, AlertTriangle, PiggyBank, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CATEGORY_META, calculateHealthScore, formatEUR, type Category } from "@/lib/finance";
+import { MonthPicker, monthRange, currentMonth, type MonthValue } from "@/components/finance/MonthPicker";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 export const Route = createFileRoute("/_app/app/")({
@@ -23,23 +24,23 @@ function Dashboard() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [txs, setTxs] = useState<Tx[]>([]);
   const [budgets, setBudgets] = useState<Array<{ category: string; planned_amount: number }>>([]);
+  const [period, setPeriod] = useState<MonthValue>(() => currentMonth());
 
   useEffect(() => {
     if (!user) return;
-    const now = new Date();
-    const start = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-01`;
+    const { startISO, endISO } = monthRange(period);
     void Promise.all([
       supabase.from("bank_accounts").select("*").eq("user_id", user.id),
       supabase.from("transactions").select("id,amount,label,category,transaction_date,is_unexpected")
-        .eq("user_id", user.id).gte("transaction_date", start).order("transaction_date", { ascending: false }),
+        .eq("user_id", user.id).gte("transaction_date", startISO).lt("transaction_date", endISO).order("transaction_date", { ascending: false }),
       supabase.from("budgets").select("category,planned_amount")
-        .eq("user_id", user.id).eq("month", now.getMonth()+1).eq("year", now.getFullYear()),
+        .eq("user_id", user.id).eq("month", period.month).eq("year", period.year),
     ]).then(([a, t, b]) => {
       setAccounts((a.data as Account[]) ?? []);
       setTxs((t.data as Tx[]) ?? []);
       setBudgets(b.data ?? []);
     });
-  }, [user]);
+  }, [user, period]);
 
   const stats = useMemo(() => {
     const totalIncome = txs.filter(t => t.amount > 0).reduce((s, t) => s + Number(t.amount), 0);
@@ -68,12 +69,14 @@ function Dashboard() {
     .map(([cat, value]) => ({ name: CATEGORY_META[cat as Category].label, value, color: CATEGORY_META[cat as Category].color }))
     .sort((a, b) => b.value - a.value);
 
-  // Last 7 days bar
+  // 7 derniers jours de la période sélectionnée (ou jusqu'à aujourd'hui)
   const last7 = useMemo(() => {
     const map: Record<string, number> = {};
     const today = new Date();
+    const endOfMonth = new Date(period.year, period.month, 0);
+    const anchor = endOfMonth < today ? endOfMonth : today;
     for (let i = 6; i >= 0; i--) {
-      const d = new Date(today); d.setDate(d.getDate() - i);
+      const d = new Date(anchor); d.setDate(d.getDate() - i);
       map[d.toISOString().slice(0, 10)] = 0;
     }
     for (const t of txs) {
@@ -85,17 +88,18 @@ function Dashboard() {
       day: new Date(d).toLocaleDateString("fr-FR", { weekday: "short" }),
       depenses: Math.round(v),
     }));
-  }, [txs]);
+  }, [txs, period]);
 
   const recent = txs.slice(0, 6);
 
   return (
     <div className="p-4 md:p-10 max-w-7xl mx-auto space-y-5 md:space-y-8">
-      <header className="flex items-end justify-between flex-wrap gap-4 md:block">
+      <header className="flex items-end justify-between flex-wrap gap-3">
         <div>
           <p className="text-sm text-muted-foreground">Bonjour {profile?.first_name} 👋</p>
           <h1 className="text-xl md:text-4xl font-bold tracking-tight mt-0.5 md:mt-1">Tableau de bord</h1>
         </div>
+        <MonthPicker value={period} onChange={setPeriod} />
       </header>
 
       {/* Hero solde — full width sur mobile */}
