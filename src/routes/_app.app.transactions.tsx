@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { CATEGORIES, CATEGORY_META, categorize, formatEUR, type Category } from "@/lib/finance";
 import { MonthPicker, monthRange, currentMonth, type MonthValue } from "@/components/finance/MonthPicker";
-import { Plus, Search, AlertCircle, Loader2, Link2, ArrowDownRight, ArrowUpRight } from "lucide-react";
+import { Plus, Search, AlertCircle, Loader2, Link2, ArrowDownRight, ArrowUpRight, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 
@@ -30,7 +30,8 @@ function TransactionsPage() {
   const [period, setPeriod] = useState<MonthValue>(() => currentMonth());
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [form, setForm] = useState({
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const emptyForm = () => ({
     type: "EXPENSE" as "EXPENSE" | "INCOME",
     label: "",
     amount: "",
@@ -38,6 +39,25 @@ function TransactionsPage() {
     category: "OTHER" as Category,
     accountId: "",
   });
+  const [form, setForm] = useState(emptyForm);
+
+  const openCreate = () => {
+    setEditingId(null);
+    setForm({ ...emptyForm(), accountId: accounts[0]?.id ?? "" });
+    setOpen(true);
+  };
+  const openEdit = (t: Tx) => {
+    setEditingId(t.id);
+    setForm({
+      type: t.amount >= 0 ? "INCOME" : "EXPENSE",
+      label: t.label,
+      amount: String(Math.abs(Number(t.amount))),
+      date: t.transaction_date,
+      category: t.category,
+      accountId: t.account_id,
+    });
+    setOpen(true);
+  };
 
   const load = async () => {
     if (!user) return;
@@ -84,14 +104,29 @@ function TransactionsPage() {
     const cat = form.type === "INCOME"
       ? (form.category === "OTHER" ? "SALARY" : form.category)
       : (form.category === "OTHER" ? categorize(form.label).category : form.category);
-    const { error } = await supabase.from("transactions").insert({
-      user_id: user.id, account_id: form.accountId, amount: signed, label: form.label,
-      category: cat, transaction_date: form.date, is_recurring: false, is_unexpected: false,
-    });
+    const payload = {
+      account_id: form.accountId, amount: signed, label: form.label,
+      category: cat, transaction_date: form.date,
+    };
+    const { error } = editingId
+      ? await supabase.from("transactions").update(payload).eq("id", editingId).eq("user_id", user.id)
+      : await supabase.from("transactions").insert({ ...payload, user_id: user.id, is_recurring: false, is_unexpected: false });
     setBusy(false);
     if (error) return toast.error(error.message);
-    toast.success(form.type === "INCOME" ? "Revenu ajouté" : "Dépense ajoutée");
-    setOpen(false); setForm(f => ({...f, label: "", amount: ""}));
+    toast.success(editingId ? "Opération modifiée" : (form.type === "INCOME" ? "Revenu ajouté" : "Dépense ajoutée"));
+    setOpen(false); setEditingId(null);
+    void load();
+  };
+
+  const remove = async () => {
+    if (!user || !editingId) return;
+    if (!confirm("Supprimer cette opération ?")) return;
+    setBusy(true);
+    const { error } = await supabase.from("transactions").delete().eq("id", editingId).eq("user_id", user.id);
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Opération supprimée");
+    setOpen(false); setEditingId(null);
     void load();
   };
 
@@ -107,21 +142,15 @@ function TransactionsPage() {
           <Link to="/app/connect" className="shrink-0 inline-flex items-center gap-1.5 text-xs md:text-sm px-3 py-2 rounded-lg border border-border/60 bg-card hover:bg-muted/50 transition-colors font-medium">
             <Link2 className="size-3.5" /> <span className="hidden sm:inline">Connecter ma banque</span><span className="sm:hidden">Banque</span>
           </Link>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <>
-                {/* Bouton classique sur desktop */}
-                <Button size="default" className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
-                  <Plus className="size-4 mr-1" /> Ajouter
-                </Button>
-                {/* FAB sur mobile */}
-                <Button size="icon" className="md:hidden fixed right-4 fab-bottom z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Ajouter une transaction">
-                  <Plus className="size-6" />
-                </Button>
-              </>
-            </DialogTrigger>
+          <Button size="default" onClick={openCreate} className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
+            <Plus className="size-4 mr-1" /> Ajouter
+          </Button>
+          <Button size="icon" onClick={openCreate} className="md:hidden fixed right-4 fab-bottom z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Ajouter une transaction">
+            <Plus className="size-6" />
+          </Button>
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditingId(null); }}>
             <DialogContent>
-              <DialogHeader><DialogTitle>Nouvelle opération</DialogTitle></DialogHeader>
+              <DialogHeader><DialogTitle>{editingId ? "Modifier l'opération" : "Nouvelle opération"}</DialogTitle></DialogHeader>
               <div className="space-y-3">
                 {/* Toggle Dépense / Revenu */}
                 <div className="grid grid-cols-2 gap-2 p-1 rounded-lg bg-muted">
@@ -158,7 +187,12 @@ function TransactionsPage() {
                     </Select></div>
                 </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="gap-2 sm:justify-between">
+                {editingId ? (
+                  <Button variant="outline" onClick={remove} disabled={busy} className="text-destructive hover:text-destructive">
+                    <Trash2 className="size-4 mr-1.5" /> Supprimer
+                  </Button>
+                ) : <span />}
                 <Button onClick={submit} disabled={busy} className="bg-gradient-primary border-0">{busy && <Loader2 className="size-4 mr-2 animate-spin" />}Enregistrer</Button>
               </DialogFooter>
             </DialogContent>
@@ -220,7 +254,7 @@ function TransactionsPage() {
         {filtered.map(t => {
           const meta = CATEGORY_META[t.category]; const Icon = meta.icon;
           return (
-            <div key={t.id} className="flex items-center gap-4 p-4">
+            <button key={t.id} type="button" onClick={() => openEdit(t)} className="w-full flex items-center gap-4 p-4 text-left hover:bg-muted/40 transition-colors">
               <div className="size-10 rounded-lg flex items-center justify-center" style={{ background: meta.color + "22", color: meta.color }}>
                 <Icon className="size-4" />
               </div>
@@ -232,7 +266,7 @@ function TransactionsPage() {
                 <p className="text-xs text-muted-foreground">{meta.label} · {new Date(t.transaction_date).toLocaleDateString("fr-FR")}</p>
               </div>
               <span className={`font-semibold ${t.amount > 0 ? "text-success" : ""}`}>{formatEUR(t.amount, { sign: true })}</span>
-            </div>
+            </button>
           );
         })}
       </Card>
