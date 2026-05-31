@@ -30,7 +30,8 @@ function TransactionsPage() {
   const [period, setPeriod] = useState<MonthValue>(() => currentMonth());
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [form, setForm] = useState({
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const emptyForm = () => ({
     type: "EXPENSE" as "EXPENSE" | "INCOME",
     label: "",
     amount: "",
@@ -38,6 +39,25 @@ function TransactionsPage() {
     category: "OTHER" as Category,
     accountId: "",
   });
+  const [form, setForm] = useState(emptyForm);
+
+  const openCreate = () => {
+    setEditingId(null);
+    setForm({ ...emptyForm(), accountId: accounts[0]?.id ?? "" });
+    setOpen(true);
+  };
+  const openEdit = (t: Tx) => {
+    setEditingId(t.id);
+    setForm({
+      type: t.amount >= 0 ? "INCOME" : "EXPENSE",
+      label: t.label,
+      amount: String(Math.abs(Number(t.amount))),
+      date: t.transaction_date,
+      category: t.category,
+      accountId: t.account_id,
+    });
+    setOpen(true);
+  };
 
   const load = async () => {
     if (!user) return;
