@@ -69,12 +69,14 @@ function Dashboard() {
     .map(([cat, value]) => ({ name: CATEGORY_META[cat as Category].label, value, color: CATEGORY_META[cat as Category].color }))
     .sort((a, b) => b.value - a.value);
 
-  // Last 7 days bar
+  // 7 derniers jours de la période sélectionnée (ou jusqu'à aujourd'hui)
   const last7 = useMemo(() => {
     const map: Record<string, number> = {};
     const today = new Date();
+    const endOfMonth = new Date(period.year, period.month, 0);
+    const anchor = endOfMonth < today ? endOfMonth : today;
     for (let i = 6; i >= 0; i--) {
-      const d = new Date(today); d.setDate(d.getDate() - i);
+      const d = new Date(anchor); d.setDate(d.getDate() - i);
       map[d.toISOString().slice(0, 10)] = 0;
     }
     for (const t of txs) {
@@ -86,7 +88,7 @@ function Dashboard() {
       day: new Date(d).toLocaleDateString("fr-FR", { weekday: "short" }),
       depenses: Math.round(v),
     }));
-  }, [txs]);
+  }, [txs, period]);
 
   const recent = txs.slice(0, 6);
 
