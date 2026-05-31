@@ -17,6 +17,7 @@ import { Route as AppAppTransactionsRouteImport } from './routes/_app.app.transa
 import { Route as AppAppSavingsRouteImport } from './routes/_app.app.savings'
 import { Route as AppAppOnboardingRouteImport } from './routes/_app.app.onboarding'
 import { Route as AppAppInvestmentsRouteImport } from './routes/_app.app.investments'
+import { Route as AppAppConnectRouteImport } from './routes/_app.app.connect'
 import { Route as AppAppChatRouteImport } from './routes/_app.app.chat'
 import { Route as AppAppBudgetRouteImport } from './routes/_app.app.budget'
 import { Route as AppAppAlertsRouteImport } from './routes/_app.app.alerts'
@@ -60,6 +61,11 @@ const AppAppInvestmentsRoute = AppAppInvestmentsRouteImport.update({
   path: '/app/investments',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAppConnectRoute = AppAppConnectRouteImport.update({
+  id: '/app/connect',
+  path: '/app/connect',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAppChatRoute = AppAppChatRouteImport.update({
   id: '/app/chat',
   path: '/app/chat',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/app/alerts': typeof AppAppAlertsRoute
   '/app/budget': typeof AppAppBudgetRoute
   '/app/chat': typeof AppAppChatRoute
+  '/app/connect': typeof AppAppConnectRoute
   '/app/investments': typeof AppAppInvestmentsRoute
   '/app/onboarding': typeof AppAppOnboardingRoute
   '/app/savings': typeof AppAppSavingsRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/app/alerts': typeof AppAppAlertsRoute
   '/app/budget': typeof AppAppBudgetRoute
   '/app/chat': typeof AppAppChatRoute
+  '/app/connect': typeof AppAppConnectRoute
   '/app/investments': typeof AppAppInvestmentsRoute
   '/app/onboarding': typeof AppAppOnboardingRoute
   '/app/savings': typeof AppAppSavingsRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   '/_app/app/alerts': typeof AppAppAlertsRoute
   '/_app/app/budget': typeof AppAppBudgetRoute
   '/_app/app/chat': typeof AppAppChatRoute
+  '/_app/app/connect': typeof AppAppConnectRoute
   '/_app/app/investments': typeof AppAppInvestmentsRoute
   '/_app/app/onboarding': typeof AppAppOnboardingRoute
   '/_app/app/savings': typeof AppAppSavingsRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
     | '/app/alerts'
     | '/app/budget'
     | '/app/chat'
+    | '/app/connect'
     | '/app/investments'
     | '/app/onboarding'
     | '/app/savings'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/app/alerts'
     | '/app/budget'
     | '/app/chat'
+    | '/app/connect'
     | '/app/investments'
     | '/app/onboarding'
     | '/app/savings'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/_app/app/alerts'
     | '/_app/app/budget'
     | '/_app/app/chat'
+    | '/_app/app/connect'
     | '/_app/app/investments'
     | '/_app/app/onboarding'
     | '/_app/app/savings'
@@ -218,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAppInvestmentsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/app/connect': {
+      id: '/_app/app/connect'
+      path: '/app/connect'
+      fullPath: '/app/connect'
+      preLoaderRoute: typeof AppAppConnectRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/app/chat': {
       id: '/_app/app/chat'
       path: '/app/chat'
@@ -246,6 +265,7 @@ interface AppRouteChildren {
   AppAppAlertsRoute: typeof AppAppAlertsRoute
   AppAppBudgetRoute: typeof AppAppBudgetRoute
   AppAppChatRoute: typeof AppAppChatRoute
+  AppAppConnectRoute: typeof AppAppConnectRoute
   AppAppInvestmentsRoute: typeof AppAppInvestmentsRoute
   AppAppOnboardingRoute: typeof AppAppOnboardingRoute
   AppAppSavingsRoute: typeof AppAppSavingsRoute
@@ -257,6 +277,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAppAlertsRoute: AppAppAlertsRoute,
   AppAppBudgetRoute: AppAppBudgetRoute,
   AppAppChatRoute: AppAppChatRoute,
+  AppAppConnectRoute: AppAppConnectRoute,
   AppAppInvestmentsRoute: AppAppInvestmentsRoute,
   AppAppOnboardingRoute: AppAppOnboardingRoute,
   AppAppSavingsRoute: AppAppSavingsRoute,
@@ -274,12 +295,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

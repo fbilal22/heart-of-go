@@ -1,7 +1,7 @@
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  LayoutDashboard, ArrowLeftRight, Wallet, Target, TrendingUp, Bell, MessageCircle, LogOut, Sparkles,
+  LayoutDashboard, ArrowLeftRight, Wallet, Target, TrendingUp, Bell, MessageCircle, LogOut, Sparkles, Link2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,7 @@ const NAV = [
   { to: "/app/savings", label: "Épargne", short: "Épargne", icon: Target },
   { to: "/app/investments", label: "Investir", short: "Invest", icon: TrendingUp },
   { to: "/app/chat", label: "Assistant IA", short: "IA", icon: MessageCircle },
+  { to: "/app/connect", label: "Ma banque", short: "Banque", icon: Link2 },
 ] as const;
 
 // 5 items optimisés pour la barre mobile (icônes seulement)
