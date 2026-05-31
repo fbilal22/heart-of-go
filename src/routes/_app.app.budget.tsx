@@ -82,25 +82,23 @@ function BudgetPage() {
           const over = pct > 100;
           return (
             <Card key={b.category} className="p-3 md:p-4 shadow-soft border-border/60">
-              <div className="flex items-center gap-3 md:gap-4">
+              <div className="flex items-center gap-3">
                 <div className="size-10 rounded-lg flex items-center justify-center shrink-0" style={{ background: meta.color + "22", color: meta.color }}>
                   <Icon className="size-4" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-medium text-sm md:text-base truncate">{meta.label}</p>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <span className={`text-xs md:text-sm font-medium ${over ? "text-destructive" : "text-muted-foreground"}`}>{formatEUR(used)}</span>
-                      <span className="text-xs text-muted-foreground">/</span>
-                      <Input type="number" inputMode="decimal" value={b.planned_amount} onChange={e => {
-                        const v = parseFloat(e.target.value) || 0;
-                        setBudgets(budgets.map((x, i) => i === idx ? {...x, planned_amount: v} : x));
-                      }} className="w-20 md:w-24 h-7 text-xs md:text-sm px-2" />
-                    </div>
-                  </div>
-                  <Progress value={Math.min(100, pct)} className="mt-2" />
+                  <p className="font-medium text-sm md:text-base truncate">{meta.label}</p>
+                  <p className={`text-xs mt-0.5 ${over ? "text-destructive font-medium" : "text-muted-foreground"}`}>
+                    {formatEUR(used)} sur {formatEUR(b.planned_amount)}
+                    {over && <span className="ml-1">⚠</span>}
+                  </p>
                 </div>
+                <Input type="number" inputMode="decimal" value={b.planned_amount} onChange={e => {
+                  const v = parseFloat(e.target.value) || 0;
+                  setBudgets(budgets.map((x, i) => i === idx ? {...x, planned_amount: v} : x));
+                }} className="w-20 md:w-24 h-9 text-sm px-2 text-right shrink-0" />
               </div>
+              <Progress value={Math.min(100, pct)} className="mt-2.5 h-1.5" />
             </Card>
           );
         })}
