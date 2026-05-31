@@ -78,68 +78,92 @@ function TransactionsPage() {
   const submit = async () => {
     if (!user || !form.accountId || !form.label || !form.amount) return toast.error("Remplissez tous les champs.");
     setBusy(true);
-    const amt = parseFloat(form.amount);
-    const cat = form.category === "OTHER" ? categorize(form.label).category : form.category;
+    const raw = Math.abs(parseFloat(form.amount));
+    if (!raw || Number.isNaN(raw)) { setBusy(false); return toast.error("Montant invalide."); }
+    const signed = form.type === "INCOME" ? raw : -raw;
+    const cat = form.type === "INCOME"
+      ? (form.category === "OTHER" ? "SALARY" : form.category)
+      : (form.category === "OTHER" ? categorize(form.label).category : form.category);
     const { error } = await supabase.from("transactions").insert({
-      user_id: user.id, account_id: form.accountId, amount: amt, label: form.label,
+      user_id: user.id, account_id: form.accountId, amount: signed, label: form.label,
       category: cat, transaction_date: form.date, is_recurring: false, is_unexpected: false,
     });
     setBusy(false);
     if (error) return toast.error(error.message);
-    toast.success("Transaction ajoutée");
+    toast.success(form.type === "INCOME" ? "Revenu ajouté" : "Dépense ajoutée");
     setOpen(false); setForm(f => ({...f, label: "", amount: ""}));
     void load();
   };
 
   return (
     <div className="p-4 md:p-10 max-w-6xl mx-auto space-y-5 md:space-y-6">
-      <header className="flex items-center justify-between gap-3">
+      <header className="flex items-center justify-between gap-3 flex-wrap">
         <div className="min-w-0">
           <h1 className="text-xl md:text-3xl font-bold tracking-tight">Transactions</h1>
           <p className="text-xs md:text-sm text-muted-foreground mt-1">{filtered.length} opérations</p>
         </div>
-        <Link to="/app/connect" className="shrink-0 inline-flex items-center gap-1.5 text-xs md:text-sm px-3 py-2 rounded-lg border border-border/60 bg-card hover:bg-muted/50 transition-colors font-medium">
-          <Link2 className="size-3.5" /> <span className="hidden sm:inline">Connecter ma banque</span><span className="sm:hidden">Banque</span>
-        </Link>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <>
-              {/* Bouton classique sur desktop */}
-              <Button size="default" className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
-                <Plus className="size-4 mr-1" /> Ajouter
-              </Button>
-              {/* FAB sur mobile */}
-              <Button size="icon" className="md:hidden fixed right-4 fab-bottom z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Ajouter une transaction">
-                <Plus className="size-6" />
-              </Button>
-            </>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>Nouvelle transaction</DialogTitle></DialogHeader>
-            <div className="space-y-3">
-              <div><Label>Libellé</Label><Input value={form.label} onChange={e => setForm({...form, label: e.target.value})} placeholder="Ex: Carrefour" /></div>
-              <div className="grid grid-cols-2 gap-3">
-                <div><Label>Montant (€)</Label><Input type="number" step="0.01" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} placeholder="-42.50" /></div>
-                <div><Label>Date</Label><Input type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} /></div>
+        <div className="flex items-center gap-2 flex-wrap">
+          <MonthPicker value={period} onChange={setPeriod} />
+          <Link to="/app/connect" className="shrink-0 inline-flex items-center gap-1.5 text-xs md:text-sm px-3 py-2 rounded-lg border border-border/60 bg-card hover:bg-muted/50 transition-colors font-medium">
+            <Link2 className="size-3.5" /> <span className="hidden sm:inline">Connecter ma banque</span><span className="sm:hidden">Banque</span>
+          </Link>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <>
+                {/* Bouton classique sur desktop */}
+                <Button size="default" className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
+                  <Plus className="size-4 mr-1" /> Ajouter
+                </Button>
+                {/* FAB sur mobile */}
+                <Button size="icon" className="md:hidden fixed right-4 fab-bottom z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Ajouter une transaction">
+                  <Plus className="size-6" />
+                </Button>
+              </>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Nouvelle opération</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                {/* Toggle Dépense / Revenu */}
+                <div className="grid grid-cols-2 gap-2 p-1 rounded-lg bg-muted">
+                  <button
+                    type="button"
+                    onClick={() => setForm({...form, type: "EXPENSE"})}
+                    className={`flex items-center justify-center gap-1.5 py-2 rounded-md text-sm font-medium transition-colors ${form.type === "EXPENSE" ? "bg-card shadow-sm text-destructive" : "text-muted-foreground"}`}
+                  >
+                    <ArrowDownRight className="size-4" /> Dépense
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForm({...form, type: "INCOME", category: form.category === "OTHER" ? "SALARY" : form.category})}
+                    className={`flex items-center justify-center gap-1.5 py-2 rounded-md text-sm font-medium transition-colors ${form.type === "INCOME" ? "bg-card shadow-sm text-success" : "text-muted-foreground"}`}
+                  >
+                    <ArrowUpRight className="size-4" /> Revenu
+                  </button>
+                </div>
+                <div><Label>Libellé</Label><Input value={form.label} onChange={e => setForm({...form, label: e.target.value})} placeholder={form.type === "INCOME" ? "Ex: Salaire, Freelance…" : "Ex: Carrefour"} /></div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div><Label>Montant (€)</Label><Input type="number" inputMode="decimal" step="0.01" min="0" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} placeholder="42.50" /></div>
+                  <div><Label>Date</Label><Input type="date" value={form.date} onChange={e => setForm({...form, date: e.target.value})} /></div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div><Label>Catégorie</Label>
+                    <Select value={form.category} onValueChange={(v) => setForm({...form, category: v as Category})}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{CATEGORY_META[c].label}</SelectItem>)}</SelectContent>
+                    </Select></div>
+                  <div><Label>Compte</Label>
+                    <Select value={form.accountId} onValueChange={(v) => setForm({...form, accountId: v})}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>{accounts.map(a => <SelectItem key={a.id} value={a.id}>{a.account_name}</SelectItem>)}</SelectContent>
+                    </Select></div>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div><Label>Catégorie</Label>
-                  <Select value={form.category} onValueChange={(v) => setForm({...form, category: v as Category})}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>{CATEGORIES.map(c => <SelectItem key={c} value={c}>{CATEGORY_META[c].label}</SelectItem>)}</SelectContent>
-                  </Select></div>
-                <div><Label>Compte</Label>
-                  <Select value={form.accountId} onValueChange={(v) => setForm({...form, accountId: v})}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>{accounts.map(a => <SelectItem key={a.id} value={a.id}>{a.account_name}</SelectItem>)}</SelectContent>
-                  </Select></div>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button onClick={submit} disabled={busy} className="bg-gradient-primary border-0">{busy && <Loader2 className="size-4 mr-2 animate-spin" />}Enregistrer</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              <DialogFooter>
+                <Button onClick={submit} disabled={busy} className="bg-gradient-primary border-0">{busy && <Loader2 className="size-4 mr-2 animate-spin" />}Enregistrer</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
       </header>
 
       <Card className="p-3 md:p-4 shadow-soft border-border/60 flex gap-2 md:gap-3">
@@ -155,6 +179,7 @@ function TransactionsPage() {
           </SelectContent>
         </Select>
       </Card>
+
 
       {breakdown.total > 0 && (
         <Card className="p-5 shadow-soft border-border/60 space-y-4">
