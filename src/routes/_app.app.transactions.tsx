@@ -9,8 +9,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { CATEGORIES, CATEGORY_META, categorize, formatEUR, type Category } from "@/lib/finance";
-import { Plus, Search, AlertCircle, Loader2 } from "lucide-react";
+import { Plus, Search, AlertCircle, Loader2, Link2 } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app/app/transactions")({
   head: () => ({ meta: [{ title: "Transactions — FinanceApp" }] }),
@@ -85,6 +86,9 @@ function TransactionsPage() {
           <h1 className="text-xl md:text-3xl font-bold tracking-tight">Transactions</h1>
           <p className="text-xs md:text-sm text-muted-foreground mt-1">{filtered.length} opérations</p>
         </div>
+        <Link to="/app/connect" className="shrink-0 inline-flex items-center gap-1.5 text-xs md:text-sm px-3 py-2 rounded-lg border border-border/60 bg-card hover:bg-muted/50 transition-colors font-medium">
+          <Link2 className="size-3.5" /> <span className="hidden sm:inline">Connecter ma banque</span><span className="sm:hidden">Banque</span>
+        </Link>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <>
