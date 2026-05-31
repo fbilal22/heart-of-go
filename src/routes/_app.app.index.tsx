@@ -8,6 +8,7 @@ import { HealthRing } from "@/components/finance/HealthRing";
 import { ArrowDownRight, ArrowUpRight, Wallet, AlertTriangle, PiggyBank, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CATEGORY_META, calculateHealthScore, formatEUR, type Category } from "@/lib/finance";
+import { MonthPicker, monthRange, currentMonth, type MonthValue } from "@/components/finance/MonthPicker";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 export const Route = createFileRoute("/_app/app/")({
