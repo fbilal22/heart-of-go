@@ -24,23 +24,23 @@ function Dashboard() {
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [txs, setTxs] = useState<Tx[]>([]);
   const [budgets, setBudgets] = useState<Array<{ category: string; planned_amount: number }>>([]);
+  const [period, setPeriod] = useState<MonthValue>(() => currentMonth());
 
   useEffect(() => {
     if (!user) return;
-    const now = new Date();
-    const start = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-01`;
+    const { startISO, endISO } = monthRange(period);
     void Promise.all([
       supabase.from("bank_accounts").select("*").eq("user_id", user.id),
       supabase.from("transactions").select("id,amount,label,category,transaction_date,is_unexpected")
-        .eq("user_id", user.id).gte("transaction_date", start).order("transaction_date", { ascending: false }),
+        .eq("user_id", user.id).gte("transaction_date", startISO).lt("transaction_date", endISO).order("transaction_date", { ascending: false }),
       supabase.from("budgets").select("category,planned_amount")
-        .eq("user_id", user.id).eq("month", now.getMonth()+1).eq("year", now.getFullYear()),
+        .eq("user_id", user.id).eq("month", period.month).eq("year", period.year),
     ]).then(([a, t, b]) => {
       setAccounts((a.data as Account[]) ?? []);
       setTxs((t.data as Tx[]) ?? []);
       setBudgets(b.data ?? []);
     });
-  }, [user]);
+  }, [user, period]);
 
   const stats = useMemo(() => {
     const totalIncome = txs.filter(t => t.amount > 0).reduce((s, t) => s + Number(t.amount), 0);
