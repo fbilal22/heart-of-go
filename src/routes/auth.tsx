@@ -9,7 +9,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
-import { Sparkles, Loader2 } from "lucide-react";
+import { Sparkles, Loader2, Wand2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { createDemoAccount } from "@/lib/demo.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
