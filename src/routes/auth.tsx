@@ -142,6 +142,19 @@ function AuthPage() {
             Continuer avec Google
           </Button>
 
+          <Button
+            variant="secondary"
+            className="w-full mt-3"
+            disabled={busy}
+            onClick={tryDemo}
+          >
+            {busy ? <Loader2 className="size-4 mr-2 animate-spin" /> : <Wand2 className="size-4 mr-2" />}
+            Essayer avec un compte démo
+          </Button>
+          <p className="mt-2 text-[11px] text-center text-muted-foreground">
+            Compte pré-rempli avec comptes bancaires, transactions, budgets, objectifs et investissements.
+          </p>
+
           <p className="mt-6 text-xs text-center text-muted-foreground">
             En continuant, vous acceptez nos conditions. <Link to="/" className="underline">Retour à l'accueil</Link>
           </p>
