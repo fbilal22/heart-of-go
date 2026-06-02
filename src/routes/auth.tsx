@@ -63,6 +63,24 @@ function AuthPage() {
     if (r.error) { toast.error("Échec Google: " + (r.error?.message ?? "inconnu")); setBusy(false); }
   };
 
+  const createDemo = useServerFn(createDemoAccount);
+  const tryDemo = async () => {
+    setBusy(true);
+    try {
+      const creds = await createDemo();
+      const { error } = await supabase.auth.signInWithPassword({
+        email: creds.email,
+        password: creds.password,
+      });
+      if (error) throw error;
+      toast.success("Compte démo prêt — exploration en cours…");
+    } catch (e) {
+      toast.error("Impossible de créer le compte démo: " + (e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-background">
       <div className="hidden md:flex md:w-1/2 bg-gradient-hero text-sidebar-foreground relative overflow-hidden">
