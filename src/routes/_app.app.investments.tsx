@@ -11,8 +11,10 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import { INVESTMENT_PRODUCTS, formatEUR } from "@/lib/finance";
-import { TrendingUp, TrendingDown, Shield, Plus, Trash2, Target, Minus } from "lucide-react";
+import { TrendingUp, TrendingDown, Shield, Plus, Trash2, Target, Minus, Activity } from "lucide-react";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TickerTape, MarketOverview, Screener } from "@/components/app/TradingViewWidgets";
 
 export const Route = createFileRoute("/_app/app/investments")({
   head: () => ({ meta: [{ title: "Investir — FinanceApp" }] }),
