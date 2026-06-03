@@ -18,12 +18,15 @@ const NAV = [
   { to: "/app/connect", label: "Ma banque", short: "Banque", icon: Link2 },
 ] as const;
 
-// 5 items optimisés pour la barre mobile (icônes seulement)
+// Navigation mobile scrollable avec toutes les pages
 const MOBILE_NAV = [
   { to: "/app", label: "Accueil", icon: LayoutDashboard, exact: true },
   { to: "/app/transactions", label: "Opés", icon: ArrowLeftRight },
   { to: "/app/budget", label: "Budget", icon: Wallet },
+  { to: "/app/savings", label: "Épargne", icon: Target },
+  { to: "/app/investments", label: "Invest", icon: TrendingUp },
   { to: "/app/chat", label: "IA", icon: MessageCircle },
+  { to: "/app/connect", label: "Banque", icon: Link2 },
   { to: "/app/alerts", label: "Alertes", icon: Bell, badge: true as const },
 ] as const;
 
