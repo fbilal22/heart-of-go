@@ -11,8 +11,10 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import { INVESTMENT_PRODUCTS, formatEUR } from "@/lib/finance";
-import { TrendingUp, TrendingDown, Shield, Plus, Trash2, Target, Minus } from "lucide-react";
+import { TrendingUp, TrendingDown, Shield, Plus, Trash2, Target, Minus, Activity } from "lucide-react";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TickerTape, MarketOverview, Screener } from "@/components/app/TradingViewWidgets";
 
 export const Route = createFileRoute("/_app/app/investments")({
   head: () => ({ meta: [{ title: "Investir — FinanceApp" }] }),
@@ -183,6 +185,46 @@ function InvestmentsPage() {
           </div>
         </Card>
       )}
+
+      {/* Real-time markets */}
+      <Card className="p-4 md:p-6 shadow-soft border-border/60 overflow-hidden">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+            <Activity className="size-4" />
+          </div>
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Marchés en temps réel</h2>
+            <p className="text-xs text-muted-foreground">Suivez les cours des indices, actions et cryptos en direct</p>
+          </div>
+          <span className="ml-auto inline-flex items-center gap-1.5 text-[10px] font-medium text-success">
+            <span className="relative flex size-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
+              <span className="relative inline-flex size-2 rounded-full bg-success" />
+            </span>
+            LIVE
+          </span>
+        </div>
+
+        <div className="-mx-4 md:-mx-6 mb-3 border-y border-border/40 bg-muted/30">
+          <TickerTape />
+        </div>
+
+        <Tabs defaultValue="overview" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-3">
+            <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+            <TabsTrigger value="screener">Screener actions</TabsTrigger>
+          </TabsList>
+          <TabsContent value="overview" className="mt-0">
+            <MarketOverview />
+          </TabsContent>
+          <TabsContent value="screener" className="mt-0">
+            <Screener />
+          </TabsContent>
+        </Tabs>
+        <p className="text-[10px] text-muted-foreground italic mt-2">Données fournies par TradingView. À titre informatif uniquement.</p>
+      </Card>
+
+
 
       <Card className="p-4 md:p-6 bg-gradient-hero text-sidebar-foreground shadow-elegant border-0">
         <div className="flex items-center gap-3">
