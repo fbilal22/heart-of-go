@@ -18,12 +18,15 @@ const NAV = [
   { to: "/app/connect", label: "Ma banque", short: "Banque", icon: Link2 },
 ] as const;
 
-// 5 items optimisés pour la barre mobile (icônes seulement)
+// Navigation mobile scrollable avec toutes les pages
 const MOBILE_NAV = [
   { to: "/app", label: "Accueil", icon: LayoutDashboard, exact: true },
   { to: "/app/transactions", label: "Opés", icon: ArrowLeftRight },
   { to: "/app/budget", label: "Budget", icon: Wallet },
+  { to: "/app/savings", label: "Épargne", icon: Target },
+  { to: "/app/investments", label: "Invest", icon: TrendingUp },
   { to: "/app/chat", label: "IA", icon: MessageCircle },
+  { to: "/app/connect", label: "Banque", icon: Link2 },
   { to: "/app/alerts", label: "Alertes", icon: Bell, badge: true as const },
 ] as const;
 
@@ -128,8 +131,8 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* Mobile bottom nav */}
       <nav
-        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-sidebar/95 backdrop-blur-xl text-sidebar-foreground border-t border-sidebar-border grid grid-cols-5 shadow-[0_-4px_16px_-4px_rgba(0,0,0,0.15)]"
-        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}
+        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-sidebar/95 backdrop-blur-xl text-sidebar-foreground border-t border-sidebar-border flex overflow-x-auto [&::-webkit-scrollbar]:hidden shadow-[0_-4px_16px_-4px_rgba(0,0,0,0.15)]"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)", scrollbarWidth: "none" }}
       >
         {MOBILE_NAV.map((item) => {
           const isExact = "exact" in item && item.exact;
@@ -139,7 +142,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           return (
             <Link key={item.to} to={item.to}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 pt-2 pb-1.5 text-[10px] font-medium transition-all relative min-h-[56px] active:scale-95",
+                "flex flex-col items-center justify-center gap-1 pt-2 pb-1.5 text-[10px] font-medium transition-all relative min-w-[72px] min-h-[56px] flex-shrink-0 active:scale-95",
                 active ? "text-primary-glow" : "text-sidebar-foreground/60"
               )}>
               <span className={cn(
@@ -153,7 +156,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                   </span>
                 )}
               </span>
-              <span className={cn("transition-opacity", active ? "opacity-100" : "opacity-80")}>{item.label}</span>
+              <span className={cn("transition-opacity whitespace-nowrap", active ? "opacity-100" : "opacity-80")}>{item.label}</span>
             </Link>
           );
         })}
