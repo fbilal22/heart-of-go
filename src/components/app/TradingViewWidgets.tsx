@@ -4,15 +4,15 @@ type WidgetProps = {
   scriptSrc: string;
   config: Record<string, unknown>;
   height?: number | string;
-  className?: string;
 };
 
-function TradingViewWidget({ scriptSrc, config, height = 500, className }: WidgetProps) {
+function TradingViewWidget({ scriptSrc, config, height = 500 }: WidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
-    containerRef.current.innerHTML = '<div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>';
+    // Clean any previous script (e.g. on hot reload / tab switch)
+    containerRef.current.innerHTML = '<div class="tradingview-widget-container__widget"></div>';
     const script = document.createElement("script");
     script.src = scriptSrc;
     script.async = true;
@@ -23,31 +23,31 @@ function TradingViewWidget({ scriptSrc, config, height = 500, className }: Widge
 
   return (
     <div
-      className={`tradingview-widget-container w-full ${className ?? ""}`}
+      className="tradingview-widget-container w-full"
       ref={containerRef}
       style={{ height: typeof height === "number" ? `${height}px` : height }}
     >
-      <div className="tradingview-widget-container__widget" style={{ height: "100%", width: "100%" }} />
+      <div className="tradingview-widget-container__widget" />
     </div>
   );
 }
 
 export const TickerTape = memo(() => (
   <TradingViewWidget
-    height={46}
+    height={82}
     scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js"
     config={{
       symbols: [
         { proName: "FOREXCOM:SPXUSD", title: "S&P 500" },
         { proName: "FOREXCOM:NSXUSD", title: "Nasdaq 100" },
-        { description: "CAC 40", proName: "INDEX:CAC40" },
         { proName: "FX_IDC:EURUSD", title: "EUR/USD" },
         { proName: "BITSTAMP:BTCUSD", title: "Bitcoin" },
         { proName: "BITSTAMP:ETHUSD", title: "Ethereum" },
+        { description: "CAC 40", proName: "INDEX:CAC40" },
       ],
       showSymbolLogo: true,
       isTransparent: true,
-      displayMode: "compact",
+      displayMode: "adaptive",
       colorTheme: "light",
       locale: "fr",
     }}
@@ -56,7 +56,7 @@ export const TickerTape = memo(() => (
 
 export const MarketOverview = memo(() => (
   <TradingViewWidget
-    height={460}
+    height={520}
     scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js"
     config={{
       colorTheme: "light",
@@ -78,6 +78,14 @@ export const MarketOverview = memo(() => (
           ],
         },
         {
+          title: "Crypto",
+          symbols: [
+            { s: "BITSTAMP:BTCUSD", d: "Bitcoin" },
+            { s: "BITSTAMP:ETHUSD", d: "Ethereum" },
+            { s: "BINANCE:SOLUSDT", d: "Solana" },
+          ],
+        },
+        {
           title: "Forex",
           symbols: [
             { s: "FX_IDC:EURUSD", d: "EUR/USD" },
@@ -90,48 +98,20 @@ export const MarketOverview = memo(() => (
   />
 ));
 
-export const StockHeatmap = memo(() => (
+export const Screener = memo(() => (
   <TradingViewWidget
-    height={460}
-    scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js"
+    height={550}
+    scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-screener.js"
     config={{
-      exchanges: [],
-      dataSource: "SPX500",
-      grouping: "sector",
-      blockSize: "market_cap_basic",
-      blockColor: "change",
-      locale: "fr",
-      symbolUrl: "",
-      colorTheme: "light",
-      hasTopBar: false,
-      isDataSetEnabled: false,
-      isZoomEnabled: true,
-      hasSymbolTooltip: true,
-      isMonoSize: false,
       width: "100%",
       height: "100%",
-    }}
-  />
-));
-
-export const CryptoHeatmap = memo(() => (
-  <TradingViewWidget
-    height={460}
-    scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-crypto-coins-heatmap.js"
-    config={{
-      dataSource: "Crypto",
-      blockSize: "market_cap_calc",
-      blockColor: "24h_close_change|5",
+      defaultColumn: "overview",
+      defaultScreen: "most_capitalized",
+      showToolbar: true,
       locale: "fr",
-      symbolUrl: "",
+      market: "us",
       colorTheme: "light",
-      hasTopBar: false,
-      isDataSetEnabled: false,
-      isZoomEnabled: true,
-      hasSymbolTooltip: true,
-      isMonoSize: false,
-      width: "100%",
-      height: "100%",
+      isTransparent: true,
     }}
   />
 ));
