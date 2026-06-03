@@ -14,7 +14,7 @@ import { INVESTMENT_PRODUCTS, formatEUR } from "@/lib/finance";
 import { TrendingUp, TrendingDown, Shield, Plus, Trash2, Target, Minus, Activity } from "lucide-react";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TickerTape, MarketOverview, Screener } from "@/components/app/TradingViewWidgets";
+import { TickerTape, MarketOverview, StockHeatmap, CryptoHeatmap } from "@/components/app/TradingViewWidgets";
 
 export const Route = createFileRoute("/_app/app/investments")({
   head: () => ({ meta: [{ title: "Investir — FinanceApp" }] }),
@@ -188,41 +188,49 @@ function InvestmentsPage() {
 
       {/* Real-time markets */}
       <Card className="p-4 md:p-6 shadow-soft border-border/60 overflow-hidden">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+        <div className="flex items-start gap-3 mb-4">
+          <div className="size-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
             <Activity className="size-4" />
           </div>
-          <div className="min-w-0">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Marchés en temps réel</h2>
-            <p className="text-xs text-muted-foreground">Suivez les cours des indices, actions et cryptos en direct</p>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-sm font-semibold uppercase tracking-wider text-foreground">Marchés en temps réel</h2>
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-success px-1.5 py-0.5 rounded-full bg-success/10">
+                <span className="relative flex size-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/70" />
+                  <span className="relative inline-flex size-1.5 rounded-full bg-success" />
+                </span>
+                LIVE
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-0.5">Indices, actions et cryptos en direct</p>
           </div>
-          <span className="ml-auto inline-flex items-center gap-1.5 text-[10px] font-medium text-success">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success/60" />
-              <span className="relative inline-flex size-2 rounded-full bg-success" />
-            </span>
-            LIVE
-          </span>
         </div>
 
-        <div className="-mx-4 md:-mx-6 mb-3 border-y border-border/40 bg-muted/30">
+        <div className="-mx-4 md:-mx-6 mb-4 border-y border-border/40 bg-muted/30 overflow-hidden">
           <TickerTape />
         </div>
 
         <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-3">
-            <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
-            <TabsTrigger value="screener">Screener actions</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 mb-3 h-auto">
+            <TabsTrigger value="overview" className="text-xs">Indices</TabsTrigger>
+            <TabsTrigger value="stocks" className="text-xs">Actions</TabsTrigger>
+            <TabsTrigger value="crypto" className="text-xs">Crypto</TabsTrigger>
           </TabsList>
-          <TabsContent value="overview" className="mt-0">
+          <TabsContent value="overview" className="mt-0 -mx-1">
             <MarketOverview />
           </TabsContent>
-          <TabsContent value="screener" className="mt-0">
-            <Screener />
+          <TabsContent value="stocks" className="mt-0 -mx-1">
+            <StockHeatmap />
+          </TabsContent>
+          <TabsContent value="crypto" className="mt-0 -mx-1">
+            <CryptoHeatmap />
           </TabsContent>
         </Tabs>
-        <p className="text-[10px] text-muted-foreground italic mt-2">Données fournies par TradingView. À titre informatif uniquement.</p>
+        <p className="text-[10px] text-muted-foreground italic mt-3 text-center">Données fournies par TradingView · À titre informatif uniquement</p>
       </Card>
+
+
 
 
 
