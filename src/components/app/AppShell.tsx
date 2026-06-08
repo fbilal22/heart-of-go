@@ -1,9 +1,17 @@
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  LayoutDashboard, ArrowLeftRight, Wallet, Target, TrendingUp, Bell, LogOut, Sparkles, Link2, MessageCircle,
+  LayoutDashboard, ArrowLeftRight, Wallet, Target, TrendingUp, Bell, LogOut, Sparkles, Link2, MessageCircle, Menu,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,16 +25,26 @@ const NAV = [
   { to: "/app/connect", label: "Ma banque", short: "Banque", icon: Link2 },
 ] as const;
 
-// Navigation mobile scrollable avec toutes les pages
+// Bottom nav mobile : 4 essentiels uniquement
 const MOBILE_NAV = [
   { to: "/app", label: "Accueil", icon: LayoutDashboard, exact: true },
   { to: "/app/transactions", label: "Opés", icon: ArrowLeftRight },
   { to: "/app/budget", label: "Budget", icon: Wallet },
-  { to: "/app/savings", label: "Épargne", icon: Target },
   { to: "/app/investments", label: "Invest", icon: TrendingUp },
-  { to: "/app/connect", label: "Banque", icon: Link2 },
-  { to: "/app/alerts", label: "Alertes", icon: Bell, badge: true as const },
 ] as const;
+
+// Toutes les fonctionnalités accessibles via le menu déroulant
+const MENU_ITEMS = [
+  { to: "/app", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+  { to: "/app/transactions", label: "Transactions", icon: ArrowLeftRight },
+  { to: "/app/budget", label: "Budget", icon: Wallet },
+  { to: "/app/savings", label: "Épargne", icon: Target },
+  { to: "/app/investments", label: "Investir", icon: TrendingUp },
+  { to: "/app/connect", label: "Ma banque", icon: Link2 },
+  { to: "/app/alerts", label: "Alertes", icon: Bell },
+  { to: "/app/chat", label: "Assistant IA", icon: MessageCircle },
+] as const;
+
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile, user, signOut } = useAuth();
@@ -121,26 +139,53 @@ export function AppShell({ children }: { children: ReactNode }) {
               </span>
             )}
           </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="size-9 rounded-lg flex items-center justify-center hover:bg-sidebar-accent" aria-label="Menu">
+                <Menu className="size-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Toutes les fonctionnalités</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {MENU_ITEMS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <DropdownMenuItem key={item.to} asChild>
+                    <Link to={item.to} className="flex items-center gap-2 cursor-pointer">
+                      <Icon className="size-4" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                );
+              })}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive cursor-pointer">
+                <LogOut className="size-4 mr-2" />
+                Déconnexion
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <button onClick={handleSignOut} className="size-9 rounded-lg flex items-center justify-center hover:bg-sidebar-accent" aria-label="Déconnexion">
             <LogOut className="size-5" />
           </button>
         </div>
+
       </header>
 
       {/* Mobile bottom nav */}
       <nav
-        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-sidebar/95 backdrop-blur-xl text-sidebar-foreground border-t border-sidebar-border flex overflow-x-auto [&::-webkit-scrollbar]:hidden shadow-[0_-4px_16px_-4px_rgba(0,0,0,0.15)]"
-        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)", scrollbarWidth: "none" }}
+        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-sidebar/95 backdrop-blur-xl text-sidebar-foreground border-t border-sidebar-border flex justify-around shadow-[0_-4px_16px_-4px_rgba(0,0,0,0.15)]"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}
       >
         {MOBILE_NAV.map((item) => {
           const isExact = "exact" in item && item.exact;
           const active = isExact ? location.pathname === item.to : location.pathname.startsWith(item.to);
           const Icon = item.icon;
-          const showBadge = "badge" in item && item.badge && unread > 0;
           return (
             <Link key={item.to} to={item.to}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 pt-2 pb-1.5 text-[10px] font-medium transition-all relative min-w-[72px] min-h-[56px] flex-shrink-0 active:scale-95",
+                "flex flex-col items-center justify-center gap-1 pt-2 pb-1.5 text-[10px] font-medium transition-all relative flex-1 min-h-[56px] active:scale-95",
                 active ? "text-primary-glow" : "text-sidebar-foreground/60"
               )}>
               <span className={cn(
@@ -148,17 +193,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                 active && "size-9 rounded-full bg-primary-glow/15"
               )}>
                 <Icon className={cn("transition-all", active ? "size-5" : "size-[22px]")} />
-                {showBadge && (
-                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-1 rounded-full bg-warning text-warning-foreground text-[9px] font-semibold flex items-center justify-center">
-                    {unread > 9 ? "9+" : unread}
-                  </span>
-                )}
               </span>
               <span className={cn("transition-opacity whitespace-nowrap", active ? "opacity-100" : "opacity-80")}>{item.label}</span>
             </Link>
           );
         })}
       </nav>
+
 
       {/* Floating chat button */}
       <Link
