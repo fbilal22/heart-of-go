@@ -1,7 +1,7 @@
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  LayoutDashboard, ArrowLeftRight, Wallet, Target, TrendingUp, Bell, MessageCircle, LogOut, Sparkles, Link2,
+  LayoutDashboard, ArrowLeftRight, Wallet, Target, TrendingUp, Bell, LogOut, Sparkles, Link2, MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,6 @@ const NAV = [
   { to: "/app/budget", label: "Budget", short: "Budget", icon: Wallet },
   { to: "/app/savings", label: "Épargne", short: "Épargne", icon: Target },
   { to: "/app/investments", label: "Investir", short: "Invest", icon: TrendingUp },
-  { to: "/app/chat", label: "Assistant IA", short: "IA", icon: MessageCircle },
   { to: "/app/connect", label: "Ma banque", short: "Banque", icon: Link2 },
 ] as const;
 
@@ -25,7 +24,6 @@ const MOBILE_NAV = [
   { to: "/app/budget", label: "Budget", icon: Wallet },
   { to: "/app/savings", label: "Épargne", icon: Target },
   { to: "/app/investments", label: "Invest", icon: TrendingUp },
-  { to: "/app/chat", label: "IA", icon: MessageCircle },
   { to: "/app/connect", label: "Banque", icon: Link2 },
   { to: "/app/alerts", label: "Alertes", icon: Bell, badge: true as const },
 ] as const;
@@ -161,6 +159,20 @@ export function AppShell({ children }: { children: ReactNode }) {
           );
         })}
       </nav>
+
+      {/* Floating chat button */}
+      <Link
+        to="/app/chat"
+        className={cn(
+          "fixed z-[60] flex items-center justify-center rounded-full shadow-glow transition-transform active:scale-90 hover:scale-105",
+          "size-14 bg-gradient-primary text-primary-foreground",
+          "bottom-[calc(5.5rem+env(safe-area-inset-bottom))] right-4 md:bottom-8 md:right-8"
+        )}
+        aria-label="Assistant IA"
+      >
+        <MessageCircle className="size-6" />
+        <span className="absolute top-0 right-0 size-3 rounded-full bg-warning border-2 border-background" />
+      </Link>
 
       <main className="flex-1 min-w-0 pt-14 md:pt-0 pb-[calc(env(safe-area-inset-bottom)+4.5rem)] md:pb-0">
         {children}
