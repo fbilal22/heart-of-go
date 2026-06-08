@@ -175,18 +175,17 @@ export function AppShell({ children }: { children: ReactNode }) {
 
       {/* Mobile bottom nav */}
       <nav
-        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-sidebar/95 backdrop-blur-xl text-sidebar-foreground border-t border-sidebar-border flex overflow-x-auto [&::-webkit-scrollbar]:hidden shadow-[0_-4px_16px_-4px_rgba(0,0,0,0.15)]"
-        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)", scrollbarWidth: "none" }}
+        className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-sidebar/95 backdrop-blur-xl text-sidebar-foreground border-t border-sidebar-border flex justify-around shadow-[0_-4px_16px_-4px_rgba(0,0,0,0.15)]"
+        style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0px)" }}
       >
         {MOBILE_NAV.map((item) => {
           const isExact = "exact" in item && item.exact;
           const active = isExact ? location.pathname === item.to : location.pathname.startsWith(item.to);
           const Icon = item.icon;
-          const showBadge = "badge" in item && item.badge && unread > 0;
           return (
             <Link key={item.to} to={item.to}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 pt-2 pb-1.5 text-[10px] font-medium transition-all relative min-w-[72px] min-h-[56px] flex-shrink-0 active:scale-95",
+                "flex flex-col items-center justify-center gap-1 pt-2 pb-1.5 text-[10px] font-medium transition-all relative flex-1 min-h-[56px] active:scale-95",
                 active ? "text-primary-glow" : "text-sidebar-foreground/60"
               )}>
               <span className={cn(
@@ -194,17 +193,13 @@ export function AppShell({ children }: { children: ReactNode }) {
                 active && "size-9 rounded-full bg-primary-glow/15"
               )}>
                 <Icon className={cn("transition-all", active ? "size-5" : "size-[22px]")} />
-                {showBadge && (
-                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-3.5 px-1 rounded-full bg-warning text-warning-foreground text-[9px] font-semibold flex items-center justify-center">
-                    {unread > 9 ? "9+" : unread}
-                  </span>
-                )}
               </span>
               <span className={cn("transition-opacity whitespace-nowrap", active ? "opacity-100" : "opacity-80")}>{item.label}</span>
             </Link>
           );
         })}
       </nav>
+
 
       {/* Floating chat button */}
       <Link
