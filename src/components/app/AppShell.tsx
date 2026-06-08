@@ -1,9 +1,17 @@
 import { Link, useLocation, useRouter } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import {
-  LayoutDashboard, ArrowLeftRight, Wallet, Target, TrendingUp, Bell, LogOut, Sparkles, Link2, MessageCircle,
+  LayoutDashboard, ArrowLeftRight, Wallet, Target, TrendingUp, Bell, LogOut, Sparkles, Link2, MessageCircle, Menu,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,16 +25,26 @@ const NAV = [
   { to: "/app/connect", label: "Ma banque", short: "Banque", icon: Link2 },
 ] as const;
 
-// Navigation mobile scrollable avec toutes les pages
+// Bottom nav mobile : 4 essentiels uniquement
 const MOBILE_NAV = [
   { to: "/app", label: "Accueil", icon: LayoutDashboard, exact: true },
   { to: "/app/transactions", label: "Opés", icon: ArrowLeftRight },
   { to: "/app/budget", label: "Budget", icon: Wallet },
-  { to: "/app/savings", label: "Épargne", icon: Target },
   { to: "/app/investments", label: "Invest", icon: TrendingUp },
-  { to: "/app/connect", label: "Banque", icon: Link2 },
-  { to: "/app/alerts", label: "Alertes", icon: Bell, badge: true as const },
 ] as const;
+
+// Toutes les fonctionnalités accessibles via le menu déroulant
+const MENU_ITEMS = [
+  { to: "/app", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+  { to: "/app/transactions", label: "Transactions", icon: ArrowLeftRight },
+  { to: "/app/budget", label: "Budget", icon: Wallet },
+  { to: "/app/savings", label: "Épargne", icon: Target },
+  { to: "/app/investments", label: "Investir", icon: TrendingUp },
+  { to: "/app/connect", label: "Ma banque", icon: Link2 },
+  { to: "/app/alerts", label: "Alertes", icon: Bell },
+  { to: "/app/chat", label: "Assistant IA", icon: MessageCircle },
+] as const;
+
 
 export function AppShell({ children }: { children: ReactNode }) {
   const { profile, user, signOut } = useAuth();
