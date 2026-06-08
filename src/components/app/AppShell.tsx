@@ -139,10 +139,38 @@ export function AppShell({ children }: { children: ReactNode }) {
               </span>
             )}
           </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="size-9 rounded-lg flex items-center justify-center hover:bg-sidebar-accent" aria-label="Menu">
+                <Menu className="size-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel>Toutes les fonctionnalités</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {MENU_ITEMS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <DropdownMenuItem key={item.to} asChild>
+                    <Link to={item.to} className="flex items-center gap-2 cursor-pointer">
+                      <Icon className="size-4" />
+                      <span>{item.label}</span>
+                    </Link>
+                  </DropdownMenuItem>
+                );
+              })}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive cursor-pointer">
+                <LogOut className="size-4 mr-2" />
+                Déconnexion
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <button onClick={handleSignOut} className="size-9 rounded-lg flex items-center justify-center hover:bg-sidebar-accent" aria-label="Déconnexion">
             <LogOut className="size-5" />
           </button>
         </div>
+
       </header>
 
       {/* Mobile bottom nav */}
