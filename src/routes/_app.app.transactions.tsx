@@ -160,7 +160,7 @@ function TransactionsPage() {
           <Button size="default" onClick={openCreate} className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
             <Plus className="size-4 mr-1" /> Ajouter
           </Button>
-          <Button size="icon" onClick={openCreate} className="md:hidden fixed right-4 fab-bottom z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Ajouter une transaction">
+          <Button size="icon" onClick={openCreate} className="md:hidden fixed right-4 fab-bottom-stacked z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Ajouter une transaction">
             <Plus className="size-6" />
           </Button>
           <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) setEditingId(null); }}>
