@@ -99,29 +99,30 @@ export const MarketOverview = memo(() => (
 ));
 
 export const Screener = memo(() => (
-  <div className="w-full overflow-x-auto -mx-1">
-    <div
-      style={{
-        minWidth: 1200,
-        // Shrink the embedded widget so more rows & columns fit on screen
-        zoom: 0.78,
-      }}
-    >
-      <TradingViewWidget
-        height={1800}
-        scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-screener.js"
-        config={{
-          width: "100%",
-          height: "100%",
-          defaultColumn: "overview",
-          defaultScreen: "most_capitalized",
-          showToolbar: true,
-          locale: "fr",
-          market: "us",
-          colorTheme: "light",
-          isTransparent: true,
-        }}
-      />
-    </div>
-  </div>
+  <TradingViewWidget
+    height={620}
+    scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-hotlists.js"
+    config={{
+      colorTheme: "light",
+      dateRange: "12M",
+      exchange: "US",
+      showChart: true,
+      locale: "fr",
+      largeChartUrl: "",
+      isTransparent: true,
+      showSymbolLogo: true,
+      showFloatingTooltip: false,
+      width: "100%",
+      height: "100%",
+      plotLineColorGrowing: "rgba(41, 98, 255, 1)",
+      plotLineColorFalling: "rgba(41, 98, 255, 1)",
+      gridLineColor: "rgba(240, 243, 250, 0)",
+      scaleFontColor: "rgba(106, 109, 120, 1)",
+      belowLineFillColorGrowing: "rgba(41, 98, 255, 0.12)",
+      belowLineFillColorFalling: "rgba(41, 98, 255, 0.12)",
+      belowLineFillColorGrowingBottom: "rgba(41, 98, 255, 0)",
+      belowLineFillColorFallingBottom: "rgba(41, 98, 255, 0)",
+      symbolActiveColor: "rgba(41, 98, 255, 0.12)",
+    }}
+  />
 ));
