@@ -100,9 +100,15 @@ export const MarketOverview = memo(() => (
 
 export const Screener = memo(() => (
   <div className="w-full overflow-x-auto -mx-1">
-    <div style={{ minWidth: 900 }}>
+    <div
+      style={{
+        minWidth: 1200,
+        // Shrink the embedded widget so more rows & columns fit on screen
+        zoom: 0.78,
+      }}
+    >
       <TradingViewWidget
-        height={600}
+        height={1000}
         scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-screener.js"
         config={{
           width: "100%",
