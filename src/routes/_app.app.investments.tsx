@@ -218,6 +218,7 @@ function InvestmentsPage() {
             <MarketOverview />
           </TabsContent>
           <TabsContent value="screener" className="mt-0">
+            <p className="text-[10px] text-muted-foreground mb-2 md:hidden">← Faites glisser pour voir toutes les colonnes →</p>
             <Screener />
           </TabsContent>
         </Tabs>
