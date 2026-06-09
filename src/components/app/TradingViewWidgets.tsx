@@ -108,7 +108,7 @@ export const Screener = memo(() => (
       }}
     >
       <TradingViewWidget
-        height={1000}
+        height={1800}
         scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-screener.js"
         config={{
           width: "100%",
