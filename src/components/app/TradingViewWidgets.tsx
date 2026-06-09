@@ -99,19 +99,23 @@ export const MarketOverview = memo(() => (
 ));
 
 export const Screener = memo(() => (
-  <TradingViewWidget
-    height={550}
-    scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-screener.js"
-    config={{
-      width: "100%",
-      height: "100%",
-      defaultColumn: "overview",
-      defaultScreen: "most_capitalized",
-      showToolbar: true,
-      locale: "fr",
-      market: "us",
-      colorTheme: "light",
-      isTransparent: true,
-    }}
-  />
+  <div className="w-full overflow-x-auto -mx-1">
+    <div style={{ minWidth: 900 }}>
+      <TradingViewWidget
+        height={600}
+        scriptSrc="https://s3.tradingview.com/external-embedding/embed-widget-screener.js"
+        config={{
+          width: "100%",
+          height: "100%",
+          defaultColumn: "overview",
+          defaultScreen: "most_capitalized",
+          showToolbar: true,
+          locale: "fr",
+          market: "us",
+          colorTheme: "light",
+          isTransparent: true,
+        }}
+      />
+    </div>
+  </div>
 ));
