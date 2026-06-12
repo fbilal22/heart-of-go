@@ -281,6 +281,10 @@ export type Database = {
       }
       savings_goals: {
         Row: {
+          auto_debit_amount: number | null
+          auto_debit_day: number | null
+          auto_debit_enabled: boolean
+          auto_debit_last_run: string | null
           created_at: string
           current_amount: number
           emoji: string
@@ -292,6 +296,10 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          auto_debit_amount?: number | null
+          auto_debit_day?: number | null
+          auto_debit_enabled?: boolean
+          auto_debit_last_run?: string | null
           created_at?: string
           current_amount?: number
           emoji?: string
@@ -303,6 +311,10 @@ export type Database = {
           user_id: string
         }
         Update: {
+          auto_debit_amount?: number | null
+          auto_debit_day?: number | null
+          auto_debit_enabled?: boolean
+          auto_debit_last_run?: string | null
           created_at?: string
           current_amount?: number
           emoji?: string

@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Loader2, Trash2 } from "lucide-react";
+import { Plus, Loader2, Trash2, Repeat } from "lucide-react";
 import { formatEUR } from "@/lib/finance";
 import { toast } from "sonner";
 
@@ -17,7 +18,12 @@ export const Route = createFileRoute("/_app/app/savings")({
   component: SavingsPage,
 });
 
-type Goal = { id: string; name: string; target_amount: number; current_amount: number; target_date: string|null; emoji: string; is_completed: boolean };
+type Goal = {
+  id: string; name: string; target_amount: number; current_amount: number;
+  target_date: string|null; emoji: string; is_completed: boolean;
+  auto_debit_enabled: boolean; auto_debit_amount: number|null;
+  auto_debit_day: number|null; auto_debit_last_run: string|null;
+};
 const EMOJI = ["🎯","🏖️","🏠","🚗","💍","🎓","💻","✈️","🎁"];
 
 function SavingsPage() {
@@ -25,7 +31,10 @@ function SavingsPage() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [form, setForm] = useState({ name: "", target: "", date: "", emoji: "🎯" });
+  const [form, setForm] = useState({
+    name: "", target: "", date: "", emoji: "🎯",
+    autoEnabled: false, autoAmount: "", autoDay: "1",
+  });
   const [customAmounts, setCustomAmounts] = useState<Record<string, string>>({});
 
   const load = async () => {
@@ -35,19 +44,52 @@ function SavingsPage() {
   };
   useEffect(() => { void load(); /* eslint-disable-next-line */ }, [user]);
 
+  // Apply due auto-debits when the page loads
+  useEffect(() => {
+    if (!user || goals.length === 0) return;
+    void runDueAutoDebits();
+    /* eslint-disable-next-line */
+  }, [user, goals.length]);
+
+  const runDueAutoDebits = async () => {
+    const today = new Date();
+    const todayISO = today.toISOString().split("T")[0];
+    const dom = today.getDate();
+    for (const g of goals) {
+      if (!g.auto_debit_enabled || !g.auto_debit_amount || !g.auto_debit_day) continue;
+      if (dom < g.auto_debit_day) continue;
+      const last = g.auto_debit_last_run ? new Date(g.auto_debit_last_run) : null;
+      const sameMonth = last && last.getFullYear() === today.getFullYear() && last.getMonth() === today.getMonth();
+      if (sameMonth) continue;
+      await contrib(g, Number(g.auto_debit_amount), { silent: true, auto: true });
+      await supabase.from("savings_goals").update({ auto_debit_last_run: todayISO }).eq("id", g.id);
+    }
+  };
+
   const add = async () => {
     if (!user || !form.name || !form.target) return toast.error("Nom et montant requis.");
     setBusy(true);
+    const autoAmt = form.autoEnabled ? parseFloat(form.autoAmount) : null;
+    const autoDay = form.autoEnabled ? parseInt(form.autoDay, 10) : null;
+    if (form.autoEnabled && (!Number.isFinite(autoAmt!) || autoAmt! <= 0 || !autoDay || autoDay < 1 || autoDay > 28)) {
+      setBusy(false);
+      return toast.error("Montant auto et jour (1-28) requis.");
+    }
     const { error } = await supabase.from("savings_goals").insert({
       user_id: user.id, name: form.name, target_amount: parseFloat(form.target),
       target_date: form.date || null, emoji: form.emoji,
+      auto_debit_enabled: form.autoEnabled,
+      auto_debit_amount: autoAmt,
+      auto_debit_day: autoDay,
     });
     setBusy(false);
     if (error) return toast.error(error.message);
-    setOpen(false); setForm({ name: "", target: "", date: "", emoji: "🎯" }); void load();
+    setOpen(false);
+    setForm({ name: "", target: "", date: "", emoji: "🎯", autoEnabled: false, autoAmount: "", autoDay: "1" });
+    void load();
   };
 
-  const contrib = async (g: Goal, amount: number) => {
+  const contrib = async (g: Goal, amount: number, opts?: { silent?: boolean; auto?: boolean }) => {
     if (!user || !amount || !Number.isFinite(amount)) return;
     const next = Math.max(0, Number(g.current_amount) + amount);
     const { error: gErr } = await supabase.from("savings_goals")
@@ -60,17 +102,20 @@ function SavingsPage() {
     const acc = accs?.[0];
     if (acc) {
       const txAmount = -amount;
+      const prefix = opts?.auto ? "Versement auto épargne" : (amount > 0 ? "Versement épargne" : "Retrait épargne");
       await supabase.from("transactions").insert({
         user_id: user.id, account_id: acc.id, amount: txAmount,
-        label: amount > 0 ? `Versement épargne — ${g.name}` : `Retrait épargne — ${g.name}`,
-        category: "SAVINGS", is_recurring: false, is_unexpected: false,
+        label: `${prefix} — ${g.name}`,
+        category: "SAVINGS", is_recurring: !!opts?.auto, is_unexpected: false,
         transaction_date: new Date().toISOString().split("T")[0],
       });
       await supabase.from("bank_accounts")
         .update({ balance: Number(acc.balance) + txAmount })
         .eq("id", acc.id);
     }
-    toast.success(amount > 0 ? `+${formatEUR(amount)} ajoutés` : `${formatEUR(Math.abs(amount))} retirés`);
+    if (!opts?.silent) {
+      toast.success(amount > 0 ? `+${formatEUR(amount)} ajoutés` : `${formatEUR(Math.abs(amount))} retirés`);
+    }
     setCustomAmounts(s => ({ ...s, [g.id]: "" }));
     void load();
   };
@@ -103,6 +148,33 @@ function SavingsPage() {
                     className={`size-9 rounded-lg text-lg ${form.emoji===e ? "bg-primary/10 ring-2 ring-primary" : "bg-muted"}`}>{e}</button>)}
                 </div>
               </div>
+
+              <div className="rounded-lg border border-border/60 p-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Repeat className="size-4 text-primary" />
+                    <Label className="cursor-pointer">Prélèvement automatique mensuel</Label>
+                  </div>
+                  <Switch checked={form.autoEnabled} onCheckedChange={(v) => setForm({...form, autoEnabled: v})} />
+                </div>
+                {form.autoEnabled && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <Label>Montant (€)</Label>
+                      <Input type="number" inputMode="decimal" value={form.autoAmount}
+                        onChange={e => setForm({...form, autoAmount: e.target.value})} placeholder="50" />
+                    </div>
+                    <div>
+                      <Label>Jour du mois (1-28)</Label>
+                      <Input type="number" min={1} max={28} value={form.autoDay}
+                        onChange={e => setForm({...form, autoDay: e.target.value})} />
+                    </div>
+                    <p className="col-span-2 text-xs text-muted-foreground">
+                      Le montant sera déduit automatiquement de votre solde chaque mois à la date choisie.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
             <DialogFooter><Button onClick={add} disabled={busy} className="bg-gradient-primary border-0">{busy && <Loader2 className="size-4 mr-2 animate-spin" />}Créer</Button></DialogFooter>
           </DialogContent>
@@ -122,6 +194,11 @@ function SavingsPage() {
                   <div>
                     <h3 className="font-semibold">{g.name}</h3>
                     {g.target_date && <p className="text-xs text-muted-foreground">Pour le {new Date(g.target_date).toLocaleDateString("fr-FR")}</p>}
+                    {g.auto_debit_enabled && g.auto_debit_amount && g.auto_debit_day && (
+                      <p className="text-xs text-primary mt-0.5 flex items-center gap-1">
+                        <Repeat className="size-3" /> {formatEUR(Number(g.auto_debit_amount))} le {g.auto_debit_day} du mois
+                      </p>
+                    )}
                   </div>
                 </div>
                 <Button size="icon" variant="ghost" onClick={() => del(g.id)}><Trash2 className="size-4" /></Button>
