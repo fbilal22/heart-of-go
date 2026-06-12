@@ -136,6 +136,34 @@ function SavingsPage() {
                 <Button size="sm" variant="outline" className="flex-1 min-w-[70px]" onClick={() => contrib(g, 100)}>+100 €</Button>
                 <Button size="sm" variant="outline" className="flex-1 min-w-[70px]" onClick={() => contrib(g, -50)}>-50 €</Button>
               </div>
+              <div className="mt-2 flex gap-2">
+                <Input
+                  type="number"
+                  inputMode="decimal"
+                  placeholder="Montant personnalisé (€)"
+                  value={customAmounts[g.id] ?? ""}
+                  onChange={e => setCustomAmounts(s => ({ ...s, [g.id]: e.target.value }))}
+                  className="flex-1"
+                />
+                <Button
+                  size="sm"
+                  className="bg-gradient-primary border-0"
+                  onClick={() => {
+                    const v = parseFloat(customAmounts[g.id] ?? "");
+                    if (!Number.isFinite(v) || v === 0) return toast.error("Saisis un montant valide.");
+                    void contrib(g, v);
+                  }}
+                >Ajouter</Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const v = parseFloat(customAmounts[g.id] ?? "");
+                    if (!Number.isFinite(v) || v === 0) return toast.error("Saisis un montant valide.");
+                    void contrib(g, -Math.abs(v));
+                  }}
+                >Retirer</Button>
+              </div>
             </Card>
           );
         })}
