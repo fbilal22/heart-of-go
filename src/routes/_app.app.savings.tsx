@@ -26,6 +26,7 @@ function SavingsPage() {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [form, setForm] = useState({ name: "", target: "", date: "", emoji: "🎯" });
+  const [customAmounts, setCustomAmounts] = useState<Record<string, string>>({});
 
   const load = async () => {
     if (!user) return;
@@ -47,8 +48,30 @@ function SavingsPage() {
   };
 
   const contrib = async (g: Goal, amount: number) => {
+    if (!user || !amount || !Number.isFinite(amount)) return;
     const next = Math.max(0, Number(g.current_amount) + amount);
-    await supabase.from("savings_goals").update({ current_amount: next, is_completed: next >= Number(g.target_amount) }).eq("id", g.id);
+    const { error: gErr } = await supabase.from("savings_goals")
+      .update({ current_amount: next, is_completed: next >= Number(g.target_amount) })
+      .eq("id", g.id);
+    if (gErr) return toast.error(gErr.message);
+
+    const { data: accs } = await supabase.from("bank_accounts")
+      .select("id, balance").eq("user_id", user.id).order("created_at", { ascending: true }).limit(1);
+    const acc = accs?.[0];
+    if (acc) {
+      const txAmount = -amount;
+      await supabase.from("transactions").insert({
+        user_id: user.id, account_id: acc.id, amount: txAmount,
+        label: amount > 0 ? `Versement épargne — ${g.name}` : `Retrait épargne — ${g.name}`,
+        category: "SAVINGS", is_recurring: false, is_unexpected: false,
+        transaction_date: new Date().toISOString().split("T")[0],
+      });
+      await supabase.from("bank_accounts")
+        .update({ balance: Number(acc.balance) + txAmount })
+        .eq("id", acc.id);
+    }
+    toast.success(amount > 0 ? `+${formatEUR(amount)} ajoutés` : `${formatEUR(Math.abs(amount))} retirés`);
+    setCustomAmounts(s => ({ ...s, [g.id]: "" }));
     void load();
   };
   const del = async (id: string) => { await supabase.from("savings_goals").delete().eq("id", id); void load(); };
@@ -112,6 +135,34 @@ function SavingsPage() {
                 <Button size="sm" variant="outline" className="flex-1 min-w-[70px]" onClick={() => contrib(g, 50)}>+50 €</Button>
                 <Button size="sm" variant="outline" className="flex-1 min-w-[70px]" onClick={() => contrib(g, 100)}>+100 €</Button>
                 <Button size="sm" variant="outline" className="flex-1 min-w-[70px]" onClick={() => contrib(g, -50)}>-50 €</Button>
+              </div>
+              <div className="mt-2 flex gap-2">
+                <Input
+                  type="number"
+                  inputMode="decimal"
+                  placeholder="Montant personnalisé (€)"
+                  value={customAmounts[g.id] ?? ""}
+                  onChange={e => setCustomAmounts(s => ({ ...s, [g.id]: e.target.value }))}
+                  className="flex-1"
+                />
+                <Button
+                  size="sm"
+                  className="bg-gradient-primary border-0"
+                  onClick={() => {
+                    const v = parseFloat(customAmounts[g.id] ?? "");
+                    if (!Number.isFinite(v) || v === 0) return toast.error("Saisis un montant valide.");
+                    void contrib(g, v);
+                  }}
+                >Ajouter</Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const v = parseFloat(customAmounts[g.id] ?? "");
+                    if (!Number.isFinite(v) || v === 0) return toast.error("Saisis un montant valide.");
+                    void contrib(g, -Math.abs(v));
+                  }}
+                >Retirer</Button>
               </div>
             </Card>
           );
