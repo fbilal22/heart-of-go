@@ -62,14 +62,9 @@ function SavingsPage() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <>
-              <Button size="default" className="bg-gradient-primary border-0 shrink-0 hidden md:inline-flex">
-                <Plus className="size-4 mr-1" /> Nouvel objectif
-              </Button>
-              <Button size="icon" className="md:hidden fixed right-4 fab-bottom-stacked z-40 size-14 rounded-full bg-gradient-primary border-0 shadow-elegant active:scale-95 transition-transform" aria-label="Nouvel objectif">
-                <Plus className="size-6" />
-              </Button>
-            </>
+            <Button size="default" className="bg-gradient-primary border-0 shrink-0">
+              <Plus className="size-4 mr-1" /> Nouvel objectif
+            </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader><DialogTitle>Nouvel objectif</DialogTitle></DialogHeader>
