@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import { formatEUR } from "@/lib/finance";
 
 export const Route = createFileRoute("/_app/app/connect")({
-  head: () => ({ meta: [{ title: "Connecter ma banque — FinanceApp" }] }),
+  head: () => ({ meta: [{ title: "Connecter ma banque — FinEase" }] }),
   component: ConnectPage,
 });
 

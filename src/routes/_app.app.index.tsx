@@ -12,7 +12,7 @@ import { MonthPicker, monthRange, currentMonth, type MonthValue } from "@/compon
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 
 export const Route = createFileRoute("/_app/app/")({
-  head: () => ({ meta: [{ title: "Tableau de bord — FinanceApp" }] }),
+  head: () => ({ meta: [{ title: "Tableau de bord — FinEase" }] }),
   component: Dashboard,
 });
 

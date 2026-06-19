@@ -15,7 +15,7 @@ import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_app/app/transactions")({
-  head: () => ({ meta: [{ title: "Transactions — FinanceApp" }] }),
+  head: () => ({ meta: [{ title: "Transactions — FinEase" }] }),
   component: TransactionsPage,
 });
 

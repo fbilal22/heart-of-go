@@ -17,7 +17,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TickerTape, MarketOverview, Screener } from "@/components/app/TradingViewWidgets";
 
 export const Route = createFileRoute("/_app/app/investments")({
-  head: () => ({ meta: [{ title: "Investir — FinanceApp" }] }),
+  head: () => ({ meta: [{ title: "Investir — FinEase" }] }),
   component: InvestmentsPage,
 });
 
