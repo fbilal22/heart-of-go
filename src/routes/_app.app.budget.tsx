@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/app/budget")({
-  head: () => ({ meta: [{ title: "Budget — FinanceApp" }] }),
+  head: () => ({ meta: [{ title: "Budget — FinEase" }] }),
   component: BudgetPage,
 });
 
