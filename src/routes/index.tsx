@@ -46,7 +46,7 @@ function Landing() {
         <div className="absolute top-10 -left-20 size-56 rounded-full bg-primary-glow/15 blur-3xl pointer-events-none" />
         <div className="relative max-w-6xl mx-auto px-5 md:px-6 py-14 md:py-32 text-center">
           <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-[11px] md:text-xs font-medium mb-5 md:mb-6">
-            <ShieldCheck className="size-3.5" /> Sécurisé · Pour les 24–35 ans
+            <ShieldCheck className="size-3.5" /> Sécurisé · Pour tous
           </span>
           <h1 className="text-[2.25rem] leading-[1.05] md:text-7xl font-bold tracking-tight">
             Reprenez le contrôle <br className="hidden sm:inline"/>
